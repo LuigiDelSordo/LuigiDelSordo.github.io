@@ -6,7 +6,7 @@
     background-color: #000;
     border: 1px solid var(--accent-color);
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 255, 102, 0.3); /* Brillo Ciber */
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
     margin: 0 auto;
     width: 100%;
     max-width: 800px;
@@ -57,10 +57,9 @@
 
 .output {
     color: #fff;
-    white-space: pre-wrap; /* Mantiene el formato de las respuestas */
+    white-space: pre-wrap;
 }
 
-/* Efecto de Cursor Parpadeante */
 .blink {
     animation: blink-caret 0.75s step-end infinite;
 }
@@ -84,7 +83,7 @@
     font-family: var(--font-mono);
     font-size: 1em;
     outline: none;
-    caret-color: var(--accent-color); /* Color del cursor */
+    caret-color: var(--accent-color); 
 }
 
 #commandInput::placeholder {
