@@ -1,4 +1,199 @@
-/* --- Sección de Contacto --- */
+/* ========================================= */
+/* --- 1. VARIABLES Y RESET --- */
+/* ========================================= */
+:root {
+    --bg-color: #121212; /* Fondo Oscuro */
+    --text-color: #e0e0e0; /* Texto Claro */
+    --accent-color: #00ff66; /* Verde Neón Ciber (el toque innovador) */
+    --secondary-bg: #1e1e1e;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'Arial', sans-serif;
+}
+
+/* Reset Básico y Tipografía */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ========================================= */
+/* --- 2. ESTILOS BASE Y NAVEGACIÓN --- */
+/* ========================================= */
+header {
+    background: var(--secondary-bg);
+    padding: 15px 0;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: var(--font-mono);
+    font-size: 1.5em;
+    color: var(--accent-color);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+}
+
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    margin-left: 25px;
+    padding: 5px 10px;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--bg-color);
+    background-color: var(--accent-color);
+    border-radius: 3px;
+}
+
+/* Sección HERO */
+.hero-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 100px 0;
+}
+
+.hero-text {
+    max-width: 60%;
+}
+
+.hero-text h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.hero-text h1 strong {
+    color: var(--accent-color);
+}
+
+.subtitle {
+    font-size: 1.5em;
+    color: #a0a0a0;
+    margin-bottom: 20px;
+}
+
+.description {
+    max-width: 700px;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: var(--accent-color);
+    color: var(--bg-color);
+    padding: 12px 30px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.cta-button:hover {
+    background-color: #33ff99; /* Tono más claro */
+    transform: translateY(-2px);
+}
+
+.hero-image-placeholder {
+    width: 300px;
+    height: 300px;
+    background-color: var(--secondary-bg);
+    border-radius: 50%;
+    border: 3px solid var(--accent-color);
+}
+
+/* Separador */
+hr {
+    border: none;
+    border-top: 1px solid var(--secondary-bg);
+    margin: 40px auto;
+    width: 80%;
+}
+
+/* Footer */
+footer {
+    background-color: var(--secondary-bg);
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid var(--accent-color);
+    margin-top: 50px;
+}
+
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+/* ========================================= */
+/* --- 3. SECCIONES DE CONTENIDO --- */
+/* ========================================= */
+
+/* Habilidades (Skills) */
+.skills-section {
+    padding: 60px 0;
+}
+
+.skills-section h2, .demo-section h2, .contact-section h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--accent-color);
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.skill-card {
+    background-color: var(--secondary-bg);
+    padding: 20px;
+    border-left: 3px solid var(--accent-color);
+    border-radius: 5px;
+}
+
+.skill-card h3 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.skill-card ul {
+    list-style: none;
+}
+
+.skill-card li {
+    padding: 5px 0;
+    font-family: var(--font-mono); 
+    font-size: 0.9em;
+}
+
+/* Sección de Contacto */
 .contact-section {
     text-align: center;
     padding: 60px 0 100px;
@@ -25,7 +220,7 @@
     font-weight: bold;
     border-radius: 5px;
     transition: transform 0.2s, opacity 0.3s;
-    color: var(--bg-color); /* Color de texto oscuro para contraste */
+    color: var(--bg-color);
 }
 
 .contact-button:hover {
@@ -34,18 +229,20 @@
 }
 
 .linkedin {
-    background-color: #0077b5; /* Azul LinkedIn */
+    background-color: #0077b5; 
 }
 
 .github {
-    background-color: #6e5494; /* Morado GitHub */
+    background-color: #6e5494; 
 }
 
 .email {
-    background-color: var(--accent-color); /* Verde Ciber */
+    background-color: var(--accent-color); 
 }
 
-/* --- Estilos de Animación (Usados por main.js) --- */
+/* ========================================= */
+/* --- 4. ANIMACIONES (Usadas por main.js) --- */
+/* ========================================= */
 .hidden-section {
     opacity: 0;
     transform: translateY(20px);
@@ -57,14 +254,15 @@
     transform: translateY(0);
 }
 
-/* Aseguramos que la sección HERO se vea bien al inicio */
+/* El hero debe ser visible inmediatamente, anulamos la transición inicial */
 #hero.hidden-section {
-    opacity: 1; /* El hero debe ser visible inmediatamente */
+    opacity: 1; 
     transform: translateY(0);
 }
 
+
 /* ========================================= */
-/* --- 4. MEDIA QUERIES (RESPONSIVE DESIGN) --- */
+/* --- 5. MEDIA QUERIES (RESPONSIVE DESIGN) --- */
 /* ========================================= */
 
 @media (max-width: 768px) {
@@ -79,7 +277,7 @@
         margin-top: 10px;
         flex-direction: column;
         width: 100%;
-        align-items: center; /* Centrar enlaces en móvil */
+        align-items: center; 
     }
 
     .nav-links li {
@@ -98,6 +296,10 @@
         flex-direction: column; /* Apilar imagen y texto */
         text-align: center;
         padding: 50px 0;
+    }
+
+    .hero-text {
+        max-width: 100%;
     }
 
     .hero-text h1 {
@@ -121,8 +323,6 @@
     }
     
     /* Reorganización de la Sección Habilidades */
-    /* skills-grid ya utiliza 'auto-fit', que debería funcionar bien, 
-       pero podemos asegurar que las tarjetas se apilan */
     .skills-grid {
         grid-template-columns: 1fr; /* Una sola columna en móvil */
         gap: 15px;
