@@ -38,9 +38,6 @@ header {
     z-index: 1000;  
 }
 
-main {
-    margin-top: 80px; 
-}
 
 nav {
     display: flex;
@@ -343,8 +340,4 @@ footer a {
     .terminal-body {
         min-height: 150px; 
     }
-}
-
-section[id] {
-    scroll-margin-top: 90px; 
 }
