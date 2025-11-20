@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Portfolio de Sistemas cargado exitosamente. Ejecutando scripts de UX...");
+    console.log("Portfolio de Sistemas ESTABILIZADO. Scripts de UX activos.");
 
     function clearUrlHash() {
         if (window.location.hash) {
@@ -11,14 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             
             const targetId = this.getAttribute('href');
-            document.querySelector(targetId).scrollIntoView({
-                behavior: 'smooth' 
-            });
             
-            history.pushState(null, null, targetId); 
+            history.pushState(null, null, targetId);
         });
     });
 
