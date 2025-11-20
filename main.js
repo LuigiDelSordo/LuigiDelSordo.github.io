@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Portfolio de Sistemas cargado exitosamente. Ejecutando scripts de UX...");
 
-    // 1. SCROLL SUAVE PARA NAVEGACIÓN INTERNA
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 2. ANIMACIÓN DE ENTRADA (FADE-IN) PARA SECCIONES
     const sections = document.querySelectorAll('section');
 
     const observer = new IntersectionObserver((entries) => {
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sections.forEach(section => {
-        // Excluir la sección de demostración y el hero para que carguen inmediatamente
         if (section.id !== 'demonstration' && section.id !== 'hero') {
             section.classList.add('hidden-section');
             observer.observe(section);
