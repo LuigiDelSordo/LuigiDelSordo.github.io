@@ -1,104 +1,86 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const outputElement = document.getElementById('terminalOutput');
-    const inputElement = document.getElementById('commandInput');
-    const typingElement = document.getElementById('typingEffect');
-    const initialInput = document.getElementById('initialInput');
+// --- Código de sys-status.js (SÓLO la LÓGICA del nuevo comando) ---
 
-    const SKILLS_TEXT = `
-==================================================
-// HABILIDADES PRINCIPALES (cat skills.txt)
-==================================================
-[ASIR CORE]
-- Administrador de SO: Windows Server, Ubuntu Server, Linux
-- Virtualización: Proxmox, VMWare
-- Redes: VLAN, Routing, Switching, Firewall (iptables/ufw)
+// ... (Todas las variables y funciones iniciales se mantienen igual: PROMPT, typeWriterEffect, etc.) ...
 
-[CYBER FOCUS]
-- Herramientas: SIEM, Honeypot (simulación), WireShark
-- OS: Kali Linux
-- Seguridad de Redes: VPN (WireGuard), Hardening de SO
+// Actualización en el objeto COMMAND_MAP
+const COMMAND_MAP = {
+    // ... (Mantener todos los comandos anteriores: help, clear, whoami, cat, ls, netstat, check-raid, sudo) ...
+    
+    // --- NUEVO COMANDO REAL: ip-lookup ---
+    'ip-lookup': {
+        description: 'Consulta información pública de geolocalización y seguridad de una IP o Dominio. Ej: ip-lookup google.com',
+        logic: async (args) => {
+            const target = args[0];
+            if (!target) return 'Error: Faltó el argumento [IP/Domain]. Uso: ip-lookup [dominio]';
 
-[DEV / CLOUD]
-- Scripting: PowerShell, bash (automatización)
-- Cloud: AWS Cloud, OCI (Conocimiento básico/práctico)
-`;
+            const API_URL = `http://ip-api.com/json/${target}`;
+            
+            // Simular el retraso del DNS Lookup y la consulta
+            await new Promise(resolve => setTimeout(resolve, 1500)); 
 
-    // 1. Efecto de "typing" para la carga inicial
-    let i = 0;
-    const speed = 15; // Velocidad de escritura
-    const textToType = SKILLS_TEXT.trim();
+            try {
+                // Usamos 'fetch' para realizar la consulta real a la API
+                const response = await fetch(API_URL);
+                const data = await response.json();
 
-    function typeWriter() {
-        if (i < textToType.length) {
-            typingElement.innerHTML += textToType.charAt(i);
-            i++;
-            setTimeout(typeWriter, speed);
-        } else {
-            typingElement.classList.remove('blink');
-            inputElement.focus();
+                if (data.status === 'success') {
+                    // Formateamos la respuesta en un estilo de terminal profesional
+                    return `
+[IP Lookup: ${data.query}]
+========================================
+Status: ${data.status.toUpperCase()}
+País: ${data.country} (${data.countryCode})
+Región: ${data.regionName} / ${data.city}
+Lat/Lon: ${data.lat}, ${data.lon}
+Proveedor: ${data.isp}
+AS/Org: ${data.as} / ${data.org}
+Timezone: ${data.timezone}
+
+(Información obtenida de ip-api.com)`
+                } else {
+                    return `<span style="color: #ffbd2e;">Error en la consulta:</span> ${data.message || 'No se pudo resolver la IP/dominio.'}`;
+                }
+
+            } catch (error) {
+                console.error("Error al consultar API:", error);
+                return `<span style="color: #ff5f56;">CRITICAL ERROR:</span> No se pudo establecer conexión con el servidor DNS/API.`;
+            }
         }
     }
+};
 
-    // Retrasar el inicio del efecto de tipeo para simular la carga
-    setTimeout(() => {
-        typeWriter();
-    }, 500);
+// ... (El resto de las funciones: handleCommand, initialLoadSequence, etc. se mantienen igual) ...
 
+// *** Nota de Integración: ***
+// Necesitas actualizar la función handleCommand para que maneje las funciones 'async'
 
-    // 2. Manejo de comandos simulados
-    inputElement.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const command = inputElement.value.trim();
-            handleCommand(command);
-            inputElement.value = '';
+async function handleCommand(commandLine) {
+    // ... (código anterior para mostrar comando y parsear) ...
+    
+    // 3. Ejecución directa (clear) - Se mantiene igual
+    if (command === 'clear') { /* ... */ }
+
+    const cmdHandler = COMMAND_MAP[command];
+    let output = '';
+    let latency = 500; 
+
+    if (cmdHandler) {
+        // CAMBIO CRÍTICO: Si la lógica es ASÍNCRONA (usa API), se usa 'await'
+        if (cmdHandler.logic) {
+            output = await cmdHandler.logic(args); // Esperamos el resultado de la API
+            if (command === 'nmap') latency = 3000;
+        } 
+        else if (cmdHandler.output) {
+            output = cmdHandler.output;
         }
-    });
-
-    const commands = {
-        'help': 'Comandos disponibles: **netstat**, **ls /sys**, **cat skills.txt**, **clear**.',
-        'cat skills.txt': SKILLS_TEXT,
-        'ls /sys': `
-[VIRT]   /sys/proxmox/clusters/
-[NET]    /sys/net/interfaces/eth0: up
-[SECURITY] /sys/security/rules/fw.conf: ACTIVE
-`,
-        'netstat': `
-Active Internet connections (simulated):
-Proto Local Address           Foreign Address         State
-TCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)
-TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)
-UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
-`,
-        'clear': () => {
-            // Elimina todos los elementos excepto el div que contiene el input
-            const body = document.querySelector('.terminal-body');
-            body.innerHTML = '';
-            // Volver a mostrar el prompt de la carga inicial
-            body.innerHTML = `<p><span class="prompt">user@portfolio-sys:~$</span> <span class="input">cat skills.txt</span></p>
-                              <p class="output">${SKILLS_TEXT}</p>`;
-            return null; // No retorna texto, la función clear lo maneja
-        }
-    };
-
-    function handleCommand(command) {
-        if (!command) return;
-
-        // Añadir el comando al historial
-        outputElement.innerHTML += `<p><span class="prompt">user@portfolio-sys:~$</span> <span class="input">${command}</span></p>`;
-
-        const responseFunc = commands[command.toLowerCase()];
-        
-        if (typeof responseFunc === 'function') {
-            responseFunc(); // Ejecuta la función (ej: 'clear')
-        } else if (responseFunc) {
-            // Muestra la respuesta del comando
-            outputElement.innerHTML += `<p class="output">${responseFunc}</p>`;
-        } else {
-            // Comando no encontrado
-            outputElement.innerHTML += `<p class="output" style="color: #ff5f56;">bash: ${command}: command not found</p>`;
-        }
-        
-        // Desplazarse hasta el final para que se vea la última línea
-        outputElement.scrollTop = outputElement.scrollHeight;
+    } else {
+        output = `<span style="color: #ff5f56;">bash: ${command}: command not found.</span> Escribe 'help' para ver la lista de comandos.`;
     }
-});
+
+    // 4. Mostrar la respuesta con efecto de escritura (simulando procesamiento)
+    await new Promise(resolve => setTimeout(resolve, latency));
+    
+    // ... (el resto del código se mantiene igual para mostrar el output) ...
+}
+
+// ... (El resto de sys-status.js) ...
