@@ -32,10 +32,6 @@ header {
     background: var(--secondary-bg);
     padding: 15px 0;
     border-bottom: 2px solid var(--accent-color);
-    position: fixed; 
-    top: 0;         
-    width: 100%;     
-    z-index: 1000;  
 }
 
 
