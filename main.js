@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearUrlHash() {
         if (window.location.hash) {
-         
             history.replaceState('', document.title, window.location.pathname + window.location.search);
         }
     }
@@ -16,9 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const targetId = this.getAttribute('href');
             document.querySelector(targetId).scrollIntoView({
-                behavior: 'smooth'
+                behavior: 'smooth' 
             });
             
+            history.pushState(null, null, targetId); 
         });
     });
 
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sections.forEach(section => {
-        
         if (section.id !== 'demonstration' && section.id !== 'hero') {
             section.classList.add('hidden-section');
             observer.observe(section);
