@@ -3,401 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luigi Del Sordo | Portafolio ASIR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Variables CSS para fácil edición */
-        :root {
-            --primary-color: #007bff; /* Azul profesional */
-            --secondary-color: #6c757d; /* Gris */
-            --text-color: #333;
-            --light-bg: #f8f9fa;
-            --dark-bg: #343a40;
-            --white: #ffffff;
-            --font-stack: 'Roboto', sans-serif;
-        }
-
-        /* 1. Reset Básico y Tipografía */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-stack);
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--white);
-            scroll-behavior: smooth;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1, h2, h3 {
-            margin-bottom: 0.5em;
-            color: var(--text-color);
-        }
-
-        h2 {
-            font-size: 2.5em;
-            text-align: center;
-            margin-bottom: 1.5em;
-        }
-        
-        /* 2. Cabecera y Navegación */
-        header {
-            background-color: var(--white);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: var(--text-color);
-            margin-left: 25px;
-            font-weight: 400;
-            transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-            color: var(--primary-color);
-        }
-        
-        /* 3. Botones (Reutilizables) */
-        .btn {
-            display: inline-block;
-            padding: 10px 25px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 700;
-            transition: background-color 0.3s, transform 0.2s;
-            margin-top: 15px;
-        }
-
-        .primary-btn {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: 2px solid var(--primary-color);
-        }
-
-        .primary-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-
-        .secondary-btn {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-
-        .secondary-btn:hover {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        /* 4. Sección Hero/Inicio */
-        .hero {
-            background-color: var(--light-bg);
-            padding: 100px 0;
-            text-align: center;
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-        }
-
-        .hero h1 {
-            font-size: 3.5em;
-            color: var(--dark-bg);
-        }
-
-        .hero h2 {
-            font-size: 1.8em;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-        }
-
-        /* 5. Secciones Generales */
-        .section {
-            padding: 80px 0;
-        }
-
-        .dark-bg {
-            background-color: var(--dark-bg);
-            color: var(--white);
-        }
-
-        .dark-bg h2, .dark-bg p {
-            color: var(--white);
-        }
-
-        .section .content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        /* 6. Habilidades */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding-top: 20px;
-        }
-
-        .skill-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 3px solid var(--primary-color);
-        }
-
-        .skill-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        /* 7. Proyectos (Ejemplo de Tarjeta) */
-        .project-card {
-            background-color: var(--light-bg);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            margin: 30px auto;
-        }
-
-        /* 8. Contacto */
-        #contacto form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 500px;
-            margin: 30px auto;
-        }
-
-        #contacto input[type="text"],
-        #contacto input[type="email"],
-        #contacto textarea {
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .social-links a {
-            color: var(--primary-color);
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: 700;
-        }
-
-        .dark-bg .social-links a {
-            color: var(--white);
-        }
-
-        .dark-bg .social-links a:hover {
-            color: var(--primary-color);
-        }
-
-        /* 9. Pie de Página */
-        footer {
-            background-color: #212529;
-            color: var(--secondary-color);
-            text-align: center;
-            padding: 20px 0;
-            font-size: 0.9em;
-        }
-
-        /* 10. Media Queries para Responsive Design */
-        @media (max-width: 768px) {
-            header .container {
-                flex-direction: column;
-            }
-
-            nav ul {
-                padding-top: 10px;
-            }
-
-            nav ul li a {
-                margin: 0 10px;
-                font-size: 0.9em;
-            }
-
-            .hero h1 {
-                font-size: 2.5em;
-            }
-
-            h2 {
-                font-size: 2em;
-            }
-        }
-    </style>
+    <title> [Tu Nombre] | Cyber-Sys Analyst</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/terminal.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <header>
         <nav class="container">
-            <div class="logo"><h4>Portafolio de Luigi Del Sordo</h4></div>
-            <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#sobre-mi">Sobre Mí</a></li>
-                <li><a href="#habilidades">Habilidades</a></li>
-                <li><a href="#proyectos">Proyectos</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+            <span class="logo">/dev/[tu_nombre]</span>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Inicio</a></li>
+                <li><a href="projects.html">Proyectos</a></li>
+                <li><a href="#skills">Habilidades</a></li>
+                <li><a href="#contact">Contacto</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="inicio" class="hero">
-        <div class="container">
-            <h1>Hola, soy Luigi Del Sordo</h1>
-            <h2>Estudiante de ASIR | Administrador de Sistemas en Formación</h2>
-            <p>Enfocado en el diseño, implementación y mantenimiento de infraestructuras de red robustas y seguras.</p>
-            <a href="#habilidades" class="btn primary-btn">Ver Especialización</a>
-        </div>
-    </section>
-
-    <section id="sobre-mi" class="section">
-        <div class="container">
-            <h2>🌍 Sobre Mí</h2>
-            <div class="content">
-                <p>Soy Luigi Del Sordo, tengo 25 años y estoy cursando **ASIR (Administración de Sistemas Informáticos en Red)**. Mi principal interés es la **Ciberseguridad**, la gestión de servidores Linux y la automatización de tareas en entornos profesionales.</p>
-                <p>Busco una oportunidad para aplicar mis conocimientos en entornos reales, desarrollando habilidades en virtualización, monitorización y cloud computing.</p>
-                <a href="ruta/a/tu/cv.pdf" target="_blank" class="btn secondary-btn">Descargar CV</a>
+    <main>
+        <section id="hero" class="container hero-section">
+            <div class="hero-text">
+                <h1>Hola, soy **[Tu Nombre]**</h1>
+                <p class="subtitle">Especialista en **Administración de Sistemas (ASIR)** | Aspirante a **Ciberseguridad**.</p>
+                <p class="description">
+                    Experiencia en **Redes, Sistemas Operativos (Linux/Windows Server)** y herramientas clave de seguridad (SIEM, Honeypot). Busco aplicar conocimientos sólidos en entornos desafiantes.
+                </p>
+                <a href="projects.html" class="cta-button">Ver Proyectos en GitHub</a>
             </div>
-        </div>
-    </section>
+            <div class="hero-image-placeholder">
+                
 
-    <section id="habilidades" class="section dark-bg">
-        <div class="container">
-            <h2>🛠 Habilidades Técnicas</h2>
+[Image of professional cyber security dashboard interface]
+
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="demonstration" class="container demo-section">
+            <h2>$ System Status Check_</h2>
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="terminal-title">user@portfolio-sys:~$</span>
+                </div>
+                <div class="terminal-body" id="terminalOutput">
+                    <p><span class="prompt">user@portfolio-sys:~$</span> <span class="input" id="initialInput">cat skills.txt</span></p>
+                    <p class="output blink" id="typingEffect"></p>
+                    </div>
+                <div class="terminal-input">
+                    <span class="prompt">user@portfolio-sys:~$</span>
+                    <input type="text" id="commandInput" placeholder="Prueba: netstat, ls /sys, or help">
+                </div>
+            </div>
+        </section>
+        
+        <hr>
+
+        <section id="skills" class="container skills-section">
+            <h2>🛠️ Habilidades Clave</h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <h3>Sistemas Operativos</h3>
-                    <p>Linux (Ubuntu, CentOS), Windows Server, Bash/PowerShell Scripting.</p>
+                    <h3>Administración & Cloud</h3>
+                    <ul>
+                        <li>**SO:** Windows Server, Ubuntu, Kali Linux</li>
+                        <li>**Cloud:** AWS, OCI</li>
+                        <li>**Scripting:** PowerShell, bash</li>
+                    </ul>
                 </div>
                 <div class="skill-card">
-                    <h3>Redes y Seguridad</h3>
-                    <p>Configuración de Routers/Switches (Cisco), VLANs, Subnetting, Firewalls, VPN.</p>
+                    <h3>Redes & Virtualización</h3>
+                    <ul>
+                        <li>**Redes:** VLAN, Routing, Switching, VPN</li>
+                        <li>**Virtualización:** Proxmox, VMWare, VirtualBox</li>
+                        <li>**Firewall:** Configuración y gestión</li>
+                    </ul>
                 </div>
                 <div class="skill-card">
-                    <h3>Virtualización</h3>
-                    <p>VMware ESXi, Proxmox, Docker, Máquinas Virtuales.</p>
+                    <h3>Ciberseguridad & Herramientas</h3>
+                    <ul>
+                        <li>**Seguridad:** SIEM, Honeypot, WireGuard</li>
+                        <li>**Análisis:** Wireshark, Nmap (conocimiento teórico/práctico)</li>
+                        <li>**Bases de Datos:** Gestión y administración</li>
+                    </ul>
                 </div>
-                <div class="skill-card">
-                    <h3>Bases de Datos</h3>
-                    <p>MySQL, SQL Server, Administración y copias de seguridad.</p>
-                </div>
             </div>
-        </div>
-    </section>
-
-    <section id="proyectos" class="section">
-        <div class="container">
-            <h2>📂 Proyectos Destacados</h2>
-            <div class="project-card">
-                <h3>Implementación de Servidor Web Seguro (Práctica ASIR)</h3>
-                <p>Instalación y configuración de un servidor Apache/Nginx en un entorno Linux, aplicando políticas de Firewall (iptables/ufw) y certificados SSL. Tecnologías: **Linux, Apache/Nginx, SSL/TLS, Bash**.</p>
-                <a href="#" target="_blank" class="btn secondary-btn">Ver Detalles</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="contacto" class="section dark-bg">
-        <div class="container">
-            <h2>📧 Contacto</h2>
-            <p>Estoy disponible para prácticas, proyectos de red y oportunidades de sistemas. ¡Hablemos!</p>
-            <form id="contactForm">
-                <input type="text" id="name" placeholder="Tu Nombre" required>
-                <input type="email" id="email" placeholder="Tu Email" required>
-                <textarea id="message" placeholder="Tu Mensaje" rows="5" required></textarea>
-                <button type="submit" class="btn primary-btn">Enviar Mensaje</button>
-                <p id="form-message" style="display: none; margin-top: 15px;"></p>
-            </form>
-            <div class="social-links">
-                <a href="[Tu Enlace a LinkedIn]" target="_blank">LinkedIn</a> |
-                <a href="[Tu Enlace a GitHub]" target="_blank">GitHub</a> |
-                <a href="mailto:luigi.delsordo@ejemplo.com">Email Directo</a>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Luigi Del Sordo. Desarrollado para mi portafolio ASIR.</p>
+            <p>&copy; 2025 [Tu Nombre]. Desarrollado con ❤️ y código limpio.</p>
+            <div class="social-links">
+                <a href="[Tu Link de GitHub]" target="_blank">GitHub</a> | 
+                <a href="[Tu Link de LinkedIn]" target="_blank">LinkedIn</a>
+            </div>
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Smooth Scroll para la Navegación
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-
-            // 2. Manejo del Formulario de Contacto (Simulación)
-            const contactForm = document.getElementById('contactForm');
-            const formMessage = document.getElementById('form-message');
-
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const message = document.getElementById('message').value;
-
-                if (name.length < 2 || !email.includes('@') || message.length < 10) {
-                    formMessage.textContent = 'Por favor, rellena todos los campos correctamente.';
-                    formMessage.style.color = 'red';
-                    formMessage.style.display = 'block';
-                    return;
-                }
-
-                // Simulación de envío
-                setTimeout(() => {
-                    formMessage.textContent = `¡Gracias, ${name}! Tu mensaje ha sido enviado. Te contactaré pronto.`;
-                    formMessage.style.color = 'green';
-                    formMessage.style.display = 'block';
-
-                    contactForm.reset();
-                }, 1500);
-            });
-        });
-    </script>
+    <script src="js/main.js"></script>
+    <script src="js/sys-status.js"></script>
 </body>
 </html>
