@@ -5,9 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const PROMPT = 'user@portfolio-sys:~$';
     const PROMPT_HTML = `<span class="prompt">${PROMPT}</span>`;
-    const SPEED = 10; // Velocidad de escritura (milisegundos)
+    const SPEED = 10;
     
-    // Contenido inicial adaptado a tu HTML
     const INITIAL_LOAD = `
 ==================================================
 // HABILIDADES PRINCIPALES (cat skills.txt)
@@ -28,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
 - Web: HTML, CSS, JavaScript, PHP
 `;
 
-    // Tabla de comandos avanzados con descripciones y lógica
     const COMMAND_MAP = {
         'help': {
             description: 'Muestra esta lista de comandos.',
@@ -83,7 +81,7 @@ TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM Agent)
 UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
 `
         },
-        // COMANDO AVANZADO CON API REAL
+        
         'ip-lookup': {
             logic: async (args) => {
                 const target = args[0];
@@ -124,7 +122,7 @@ Timezone: ${data.timezone}
             output: `
 [RAID Status Check - Alta Disponibilidad]
 Array: RAID1-DATA (md0)
-Status: **CLEAN**
+Status: CLEAN
 Disks: 2/2 (sda1, sdb1)
 Last Sync: Mon Nov 17 08:30:00 2025
 Capacity: 2TB
@@ -133,27 +131,23 @@ Capacity: 2TB
         'sudo': { 
             logic: (args) => {
                 if (args[0] === 'poweroff') {
-                    // Easter Egg
                     return `
     *** SYSTEM SHUTDOWN INITIATED ***
   
-        __  __ 
+        __   __ 
        |  \\/  |
        | \\  / |
        | |\\/| |
-       | |  | |
-       |_|  |_|
+       | |   | |
+       |_|   |_|
   
-    Simulación terminada. Presiona 'clear' para reiniciar.
-    (Pista: Demostración de privilegios ASIR/Hardening)`;
+    Simulación terminada. Presiona 'clear' para reiniciar.`;
                 }
                 return 'sudo: Comando no reconocido o permisos insuficientes.';
             }
         }
     };
-
-    // --- Funciones de Utilidad ---
-
+    
     function typeWriterEffect(element, text) {
         return new Promise(resolve => {
             let i = 0;
@@ -201,7 +195,6 @@ Capacity: 2TB
 
         if (cmdHandler) {
             if (cmdHandler.logic) {
-                // Comando asíncrono (API o lógica compleja)
                 output = await cmdHandler.logic(args); 
             } 
             else if (cmdHandler.output) {
@@ -235,7 +228,6 @@ Capacity: 2TB
         inputElement.focus();
     }
 
-    // --- Inicialización ---
     inputElement.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !inputElement.disabled) {
             const commandLine = inputElement.value.trim();
