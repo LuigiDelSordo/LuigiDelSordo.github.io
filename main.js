@@ -1,12 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Portfolio de Sistemas cargado exitosamente. Ejecutando scripts de UX...");
 
+    function clearUrlHash() {
+        if (window.location.hash) {
+         
+            history.replaceState('', document.title, window.location.pathname + window.location.search);
+        }
+    }
+    
+    clearUrlHash();
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
+            
+            const targetId = this.getAttribute('href');
+            document.querySelector(targetId).scrollIntoView({
                 behavior: 'smooth'
             });
+            
         });
     });
 
@@ -24,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sections.forEach(section => {
+        
         if (section.id !== 'demonstration' && section.id !== 'hero') {
             section.classList.add('hidden-section');
             observer.observe(section);
