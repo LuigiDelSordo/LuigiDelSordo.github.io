@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             
-            const targetId = this.getAttribute('href');
             
+            const targetId = this.getAttribute('href');
+
             history.pushState(null, null, targetId);
         });
     });
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sections.forEach(section => {
+        
         if (section.id !== 'demonstration' && section.id !== 'hero') {
             section.classList.add('hidden-section');
             observer.observe(section);
