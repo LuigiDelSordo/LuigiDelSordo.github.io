@@ -255,7 +255,7 @@ footer a {
 }
 
 .menu-toggle {
-    display: none; 
+    display: none;
     flex-direction: column;
     justify-content: space-around;
     width: 30px;
@@ -280,6 +280,7 @@ footer a {
 }
 
 @media (max-width: 768px) {
+    
     .menu-toggle {
         display: flex;
     }
@@ -319,6 +320,53 @@ footer a {
     nav {
         justify-content: space-between;
     }
+    
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 50px 0;
+    }
+
+    .hero-text {
+        order: 0;
+        max-width: 100%;
+    }
+
+    .hero-image-placeholder {
+        order: 1;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: 200px;
+        height: 200px;
+    }
+
+    .hero-text h1 {
+        font-size: 2.2em;    
+    }
+
+    .subtitle {
+        font-size: 1.2em;
+    }
+
+    .terminal-window {
+        max-width: 95%;
+        font-size: 0.8em;
+    }
+    
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .contact-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .contact-button {
+        width: 80%;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 480px) {
@@ -335,7 +383,7 @@ footer a {
     }
 
     .terminal-body {
-        min-height: 150px; 
+        min-height: 150px;
     }
 }
 
