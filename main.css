@@ -72,27 +72,41 @@ nav {
     border-radius: 3px;
 }
 
+/* === INICIO DE CORRECCIÓN HERO DESKTOP === */
+
 .hero-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 100px 0;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Necesario para que la imagen caiga en móvil */
 }
 
+/* 🛑 REGLAS DE ESCRITORIO PARA AGRUPAR TEXTO Y SEPARAR IMAGEN 🛑 */
 .hero-header-text, .hero-description-content {
-    flex-basis: 45%;
-    max-width: 45%;
+    /* Estos bloques de texto deben ocupar la columna izquierda */
+    flex-basis: 55%; 
+    max-width: 55%; 
+    order: unset; /* Eliminar cualquier ordenamiento en desktop */
 }
 
 .hero-image-placeholder {
-    flex-basis: 45%;
-    max-width: 45%;
+    /* La imagen debe ocupar la columna derecha */
+    flex-basis: 35%; 
+    max-width: 35%;
+    order: unset; /* Eliminar cualquier ordenamiento en desktop */
 }
 
-.hero-header-text { order: 1; }
-.hero-image-placeholder { order: 2; }
-.hero-description-content { order: 3; }
+/* Ajuste de espaciado entre los dos bloques de texto apilados en la izquierda */
+.hero-header-text {
+    margin-bottom: 20px; 
+}
+.hero-description-content {
+    margin-bottom: 20px; 
+}
+
+
+/* === FIN DE CORRECCIÓN HERO DESKTOP === */
 
 .hero-text {
     max-width: 60%;
@@ -343,7 +357,7 @@ footer a {
         padding: 50px 0;
     }
     
-    /* Reglas específicas para la reorganización en móvil (order) */
+    /* 🛑 REORGANIZACIÓN MÓVIL (Lo que se ve bien en móvil) */
     .hero-header-text, .hero-description-content, .hero-image-placeholder {
         flex-basis: 100%;
         max-width: 100%;
@@ -355,11 +369,11 @@ footer a {
     }
     .hero-image-placeholder {
         order: 2;
-        margin: 30px auto; /* Centrar la imagen en móvil */
+        margin: 30px auto;
     }
     .hero-description-content {
         order: 3;
-        padding: 0 20px; /* Añadir padding al texto para que no se pegue a los bordes */
+        padding: 0 20px;
     }
 
     .hero-text h1 {
