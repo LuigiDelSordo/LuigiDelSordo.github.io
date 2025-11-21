@@ -74,8 +74,22 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 100px 0;
-    min-height: 100vh;
+    flex-wrap: wrap; 
 }
+
+.hero-header-text, .hero-description-content {
+    flex-basis: 45%; 
+    max-width: 45%;
+}
+
+.hero-image-placeholder {
+    flex-basis: 45%; 
+    max-width: 45%;
+}
+
+.hero-header-text { order: 1; }
+.hero-image-placeholder { order: 2; }
+.hero-description-content { order: 3; }
 
 .hero-text {
     max-width: 60%;
@@ -322,10 +336,25 @@ footer a {
     }
     
     .hero-section {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: column; 
         padding: 50px 0;
     }
+    .hero-header-text, .hero-description-content, .hero-image-placeholder {
+        flex-basis: 100%;
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .hero-header-text {
+        order: 1;
+    }
+    .hero-image-placeholder {
+        order: 2; 
+    }
+    .hero-description-content {
+        order: 3; 
+    }
+}
 
     .hero-text {
         order: 0;
