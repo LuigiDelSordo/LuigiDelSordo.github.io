@@ -76,41 +76,43 @@ nav {
 
 .hero-section {
     display: flex;
-    /* justify-content: space-between ya no es necesario aquí */
-    align-items: flex-start; /* Alinea todo arriba primero */
-    padding: 50px 0; /* 🛑 CORRECCIÓN 1: Reducir el padding superior/inferior del Hero */
+    /* Usamos 'row' explícitamente para Desktop */
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px 0; 
     flex-wrap: wrap; 
 }
 
 /* 🛑 REGLAS DE ESCRITORIO PARA AGRUPAR TEXTO Y SEPARAR IMAGEN 🛑 */
 
 .hero-header-text, .hero-description-content {
-    /* 🛑 CORRECCIÓN 2: Ampliar texto al 65% */
+    /* Ampliar texto al 65% para la columna izquierda */
     flex-basis: 65%; 
     max-width: 65%;
+    /* Aseguramos el orden vertical en la columna izquierda */
     order: unset;
 }
 
 .hero-image-placeholder {
-    /* 🛑 CORRECCIÓN 3: Reducir imagen al 30% y centrar verticalmente */
+    /* La imagen ocupa el 30% en la columna derecha y se centra */
     flex-basis: 30%; 
     max-width: 30%;
     align-self: center; 
     order: unset;
 }
 
-/* Restaurar el orden vertical del texto en la columna izquierda */
+/* Ajuste de espaciado entre los dos bloques de texto apilados en la izquierda */
 .hero-header-text {
-    order: 1;
-    margin-bottom: 0; /* Quitar espacio innecesario */
+    margin-bottom: 0; /* Quitar espacio innecesario del título */
 }
 .hero-description-content {
-    order: 2;
-    margin-top: 30px; /* Añadir espacio entre subtítulo y descripción (si se desea) */
+    margin-top: 20px; /* Separación entre el subtítulo y la descripción (20px) */
     margin-bottom: 20px;
 }
 
 /* === FIN DE CORRECCIÓN HERO DESKTOP FINAL === */
+
 
 .hero-text {
     max-width: 60%;
