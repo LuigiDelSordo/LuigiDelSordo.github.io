@@ -347,7 +347,6 @@ footer a {
     }
     
     .hero-header-text, .hero-description-content, .hero-image-placeholder {
-        width: 100%;
         margin: 10px 0;
         order: unset; 
     }
