@@ -38,7 +38,8 @@ header {
 }
 
 main {
-    margin-top: 80px;
+    /* Mantenemos el margen top para evitar que el header fijo cubra el Hero */
+    margin-top: 80px; 
 }
 
 nav {
@@ -72,29 +73,37 @@ nav {
     border-radius: 3px;
 }
 
-/* === INICIO DE CORRECCIÓN HERO DESKTOP === */
-
 .hero-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 100px 0;
-    flex-wrap: wrap; /* Necesario para que la imagen caiga en móvil */
+
+    /* 🛑 CORRECCIÓN 1: Reducir el padding superior del Hero. 
+       Ya tenemos margin-top: 80px en main, 
+       así que reducimos esto para que el título esté más arriba. */
+    padding-top: 50px; 
+    padding-bottom: 50px; 
+    
+    flex-wrap: wrap;
 }
 
-/* 🛑 REGLAS DE ESCRITORIO PARA AGRUPAR TEXTO Y SEPARAR IMAGEN 🛑 */
+/* 🛑 REGLAS DE ESCRITORIO PARA AMPLIAR TEXTO Y CENTRAR IMAGEN 🛑 */
 .hero-header-text, .hero-description-content {
-    /* Estos bloques de texto deben ocupar la columna izquierda */
-    flex-basis: 55%; 
-    max-width: 55%; 
-    order: unset; /* Eliminar cualquier ordenamiento en desktop */
+    /* 🛑 CORRECCIÓN 2: Aumentar el ancho del texto al 60% para que se vea más a lo ancho. */
+    flex-basis: 60%; 
+    max-width: 60%; 
+    order: unset; 
 }
 
 .hero-image-placeholder {
-    /* La imagen debe ocupar la columna derecha */
-    flex-basis: 35%; 
-    max-width: 35%;
-    order: unset; /* Eliminar cualquier ordenamiento en desktop */
+    /* 🛑 CORRECCIÓN 3: Reducir el espacio de la imagen al 30% y centrar verticalmente. */
+    flex-basis: 30%; 
+    max-width: 30%;
+    order: unset; 
+    
+    /* 🛑 CORRECCIÓN 3.1: Asegurar que esté centrada verticalmente en el lado derecho */
+    align-self: center; 
 }
 
 /* Ajuste de espaciado entre los dos bloques de texto apilados en la izquierda */
@@ -104,9 +113,6 @@ nav {
 .hero-description-content {
     margin-bottom: 20px; 
 }
-
-
-/* === FIN DE CORRECCIÓN HERO DESKTOP === */
 
 .hero-text {
     max-width: 60%;
@@ -357,7 +363,6 @@ footer a {
         padding: 50px 0;
     }
     
-    /* 🛑 REORGANIZACIÓN MÓVIL (Lo que se ve bien en móvil) */
     .hero-header-text, .hero-description-content, .hero-image-placeholder {
         flex-basis: 100%;
         max-width: 100%;
