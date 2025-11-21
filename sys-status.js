@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const outputElement = document.getElementById('terminalOutput');
     const inputElement = document.getElementById('commandInput');
-    const typingElement = document.getElementById('typingEffect');
+    const demoSection = document.getElementById('demonstration'); 
     
+    let initialized = false; 
+
     const PROMPT = 'user@portfolio-sys:~$';
     const PROMPT_HTML = `<span class="prompt">${PROMPT}</span>`;
-    const SPEED = 10;
-    
+    const SPEED = 10; 
+
     const INITIAL_LOAD = `
 ==================================================
 // HABILIDADES PRINCIPALES (cat skills.txt)
@@ -81,7 +83,6 @@ TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM Agent)
 UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
 `
         },
-        
         'ip-lookup': {
             logic: async (args) => {
                 const target = args[0];
@@ -122,7 +123,7 @@ Timezone: ${data.timezone}
             output: `
 [RAID Status Check - Alta Disponibilidad]
 Array: RAID1-DATA (md0)
-Status: CLEAN
+Status: **CLEAN**
 Disks: 2/2 (sda1, sdb1)
 Last Sync: Mon Nov 17 08:30:00 2025
 Capacity: 2TB
@@ -141,13 +142,14 @@ Capacity: 2TB
        | |   | |
        |_|   |_|
   
-    Simulación terminada. Presiona 'clear' para reiniciar.`;
+    Simulación terminada. Presiona 'clear' para reiniciar.
+    (Pista: Demostración de privilegios ASIR/Hardening)`;
                 }
                 return 'sudo: Comando no reconocido o permisos insuficientes.';
             }
         }
     };
-    
+
     function typeWriterEffect(element, text) {
         return new Promise(resolve => {
             let i = 0;
@@ -217,28 +219,36 @@ Capacity: 2TB
     }
     
     async function initialLoadSequence() {
+        const typingElement = document.getElementById('typingEffect'); 
+
         const initialP = document.createElement('p');
         initialP.innerHTML = `${PROMPT_HTML} <span class="input" id="initialInput">cat skills.txt</span>`;
         outputElement.appendChild(initialP);
 
-        typingElement.innerHTML = '';
+        typingElement.innerHTML = ''; 
 
         await typeWriterEffect(typingElement, INITIAL_LOAD.trim());
         appendNewPrompt();
         inputElement.focus();
     }
 
-    inputElement.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !inputElement.disabled) {
-            const commandLine = inputElement.value.trim();
-            inputElement.value = ''; 
-            handleCommand(commandLine);
-        }
-    });
+    function initializeConsole() {
+        if (initialized) return; 
+
+        initialized = true;
+  
+        document.getElementById('typingEffect').classList.remove('blink');
+
+        inputElement.disabled = true; 
+        initialLoadSequence().then(() => {
+            inputElement.disabled = false;
+            inputElement.focus();
+        });
+
+        demoSection.removeEventListener('mouseover', initializeConsole);
+    }
+    
+    demoSection.addEventListener('mouseover', initializeConsole);
 
     inputElement.disabled = true; 
-    initialLoadSequence().then(() => {
-        inputElement.disabled = false;
-        inputElement.focus();
-    });
 });
