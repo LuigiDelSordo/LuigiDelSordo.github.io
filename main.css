@@ -38,8 +38,7 @@ header {
 }
 
 main {
-    /* Mantenemos el margen top para evitar que el header fijo cubra el Hero */
-    margin-top: 80px; 
+    margin-top: 80px;
 }
 
 nav {
@@ -73,46 +72,45 @@ nav {
     border-radius: 3px;
 }
 
+/* === INICIO DE CORRECCIÓN HERO DESKTOP FINAL === */
+
 .hero-section {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 100px 0;
-
-    /* 🛑 CORRECCIÓN 1: Reducir el padding superior del Hero. 
-       Ya tenemos margin-top: 80px en main, 
-       así que reducimos esto para que el título esté más arriba. */
-    padding-top: 50px; 
-    padding-bottom: 50px; 
-    
-    flex-wrap: wrap;
+    /* justify-content: space-between ya no es necesario aquí */
+    align-items: flex-start; /* Alinea todo arriba primero */
+    padding: 50px 0; /* 🛑 CORRECCIÓN 1: Reducir el padding superior/inferior del Hero */
+    flex-wrap: wrap; 
 }
 
-/* 🛑 REGLAS DE ESCRITORIO PARA AMPLIAR TEXTO Y CENTRAR IMAGEN 🛑 */
+/* 🛑 REGLAS DE ESCRITORIO PARA AGRUPAR TEXTO Y SEPARAR IMAGEN 🛑 */
+
 .hero-header-text, .hero-description-content {
-    /* 🛑 CORRECCIÓN 2: Aumentar el ancho del texto al 60% para que se vea más a lo ancho. */
-    flex-basis: 60%; 
-    max-width: 60%; 
-    order: unset; 
+    /* 🛑 CORRECCIÓN 2: Ampliar texto al 65% */
+    flex-basis: 65%; 
+    max-width: 65%;
+    order: unset;
 }
 
 .hero-image-placeholder {
-    /* 🛑 CORRECCIÓN 3: Reducir el espacio de la imagen al 30% y centrar verticalmente. */
+    /* 🛑 CORRECCIÓN 3: Reducir imagen al 30% y centrar verticalmente */
     flex-basis: 30%; 
     max-width: 30%;
-    order: unset; 
-    
-    /* 🛑 CORRECCIÓN 3.1: Asegurar que esté centrada verticalmente en el lado derecho */
     align-self: center; 
+    order: unset;
 }
 
-/* Ajuste de espaciado entre los dos bloques de texto apilados en la izquierda */
+/* Restaurar el orden vertical del texto en la columna izquierda */
 .hero-header-text {
-    margin-bottom: 20px; 
+    order: 1;
+    margin-bottom: 0; /* Quitar espacio innecesario */
 }
 .hero-description-content {
-    margin-bottom: 20px; 
+    order: 2;
+    margin-top: 30px; /* Añadir espacio entre subtítulo y descripción (si se desea) */
+    margin-bottom: 20px;
 }
+
+/* === FIN DE CORRECCIÓN HERO DESKTOP FINAL === */
 
 .hero-text {
     max-width: 60%;
