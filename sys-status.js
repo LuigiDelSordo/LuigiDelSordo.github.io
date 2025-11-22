@@ -1,30 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- ESTADO INICIAL ---
+    // --- VARIABLES DE ESTADO ---
     let currentDir = '/';
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
     const SPEED = 10; 
-
-    const INITIAL_LOAD = `
-==================================================
-HABILIDADES PRINCIPALES (cat skills.txt)
-==================================================
-[ASIR CORE]
-- SO: Windows Server, Ubuntu, AlmaLinux
-- Virtualización: Proxmox, VMWare, VirtualBox
-- Redes: VLAN, Routing, Switching, Firewall, OSI Layer
-
-[CYBER FOCUS]
-- Herramientas: SIEM, Honeypot (simulación), WireShark, Nmap
-- Seguridad: VPN (WireGuard), Hardening, Criptografía
-- Rol: Aspirante a Analista SOC / Pentesting
-
-[DEV/DATA]
-- Scripting: PowerShell, bash
-- Bases de Datos: MariaDB (CLI), PhpMyAdmin
-- Web: HTML, CSS, JavaScript, PHP
-`;
 
     // --- SISTEMA DE ARCHIVOS VIRTUAL ---
     const fileSystem = {
@@ -35,6 +15,9 @@ HABILIDADES PRINCIPALES (cat skills.txt)
         '/home': { files: ['cv.pdf', 'profile.txt'], dirs: [userName] },
         '/home/user': { files: [], dirs: [] }
     };
+
+    const INSTALLED_PACKAGES = ['python3', 'git', 'nginx', 'mariadb-server'];
+    const auditLog = []; 
 
     // --- ELEMENTOS DEL DOM ---
     const outputElement = document.getElementById('terminalOutput');
@@ -78,8 +61,32 @@ HABILIDADES PRINCIPALES (cat skills.txt)
     const COMMAND_MAP = {
         'help': {
             output: `
-Comandos ASIR/Redes Prácticos: ip-lookup, ping, traceroute, ssh, netstat, arp, dig, nmap, nslookup, route, ifconfig.
-Comandos Sistema Virtual: help, clear, whoami, cd, ls, cat, touch, rm, check-raid, login, sudo poweroff.
+NAME
+    help - Muestra información de los comandos.
+
+SINTAXIS
+    help [comando]
+
+DESCRIPCIÓN
+    Comandos de Navegación y Archivos (Simulación de Linux):
+        cd [dir]        - Cambia el directorio actual. Usa '..' para subir.
+        ls              - Lista archivos y directorios en la ubicación actual.
+        cat [archivo]   - Muestra el contenido de un archivo.
+        touch [archivo] - Crea un nuevo archivo vacío (simulado).
+        rm [archivo]    - Elimina un archivo (simulado).
+
+    Comandos de Sistema y Redes (Demostración de Habilidades ASIR):
+        sudo apt [arg]  - Simulación de gestor de paquetes (update/install).
+        whoami          - Muestra el usuario actual.
+        login [user]    - Inicia sesión como otro usuario (simulado).
+        ip-lookup [ip]  - Consulta la geolocalización (Real API).
+        date-lookup [city] - Consulta la hora en tiempo real de una ciudad (Real API).
+        ping [host]     - Simula el chequeo de conectividad de red.
+        netstat         - Muestra conexiones de red activas.
+        nmap [ip]       - Simula un escaneo de puertos (Demostración de filtros Firewall).
+        check-raid      - Muestra el estado del sistema de Alta Disponibilidad (RAID).
+        clear           - Limpia la pantalla.
+        sudo poweroff   - Easter Egg: inicia la secuencia de apagado.
 `
         },
         'whoami': { output: `${userName} (ASIR, IT Junior, Ciber-Aspirante)` },
@@ -140,10 +147,6 @@ Comandos Sistema Virtual: help, clear, whoami, cd, ls, cat, touch, rm, check-rai
                 const file = args[0];
                 if (!file) return 'Error: Faltó el argumento [file]. Uso: cat [file]';
                 
-                const fullPath = currentDir.endsWith('/') ? currentDir + file : currentDir + '/' + file;
-
-                if (file.toLowerCase() === 'skills.txt') return INITIAL_LOAD;
-                
                 for (const path in fileSystem) {
                     if (fileSystem[path].files.includes(file)) {
                         switch (file.toLowerCase()) {
@@ -156,7 +159,7 @@ Comandos Sistema Virtual: help, clear, whoami, cd, ls, cat, touch, rm, check-rai
                     }
                 }
                 
-                return `Error: Archivo '${file}' no encontrado en el sistema simulado.`;
+                return `bash: cat: ${file}: No existe el archivo o permiso denegado.`;
             }
         },
         'touch': {
@@ -169,7 +172,7 @@ Comandos Sistema Virtual: help, clear, whoami, cd, ls, cat, touch, rm, check-rai
                     node.files.push(file);
                     return '';
                 }
-                return `touch: ${file}: El archivo ya existe o permiso denegado.`;
+                return `bash: touch: ${file}: El archivo ya existe o permiso denegado.`;
             }
         },
         'rm': {
@@ -184,11 +187,76 @@ Comandos Sistema Virtual: help, clear, whoami, cd, ls, cat, touch, rm, check-rai
                     node.files.splice(index, 1);
                     return '';
                 }
-                return `rm: no se puede borrar '${file}': No existe el archivo.`;
+                return `bash: rm: ${file}: No existe el archivo.`;
             }
         },
         
+        // --- Comandos de Instalación/Actualización (Simulación) ---
+        'sudo': {
+            logic: async (args) => {
+                if (args[0] === 'apt' && args[1] === 'update') {
+                    const output = `
+Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
+Hit:2 http://es.archive.ubuntu.com/ubuntu focal InRelease
+Get:3 http://es.archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
+Get:4 http://es.archive.ubuntu.com/ubuntu focal-backports InRelease [108 kB]
+Fetched 222 kB in 1s (150 kB/s)
+Reading package lists... Done
+`;
+                    await new Promise(resolve => setTimeout(resolve, 1500)); 
+                    return output;
+                }
+                if (args[0] === 'apt' && args[1] === 'install') {
+                    const packageName = args[2] || 'paquete-desconocido';
+                    if (INSTALLED_PACKAGES.includes(packageName)) {
+                         return `${packageName} ya está en su versión más reciente.`;
+                    }
+                    const output = `
+Reading package lists... Done
+Building dependency tree... Done
+The following NEW packages will be installed:
+  ${packageName} libssl-dev libevent-2.1
+Need to get 15.5 MB of archives.
+Get:1 http://es.archive.ubuntu.com/ubuntu/pool/main/d/${packageName} ${packageName}_1.0_amd64.deb [2.5 MB]
+Progress: [██████████████████████████████████] 100%
+Selecting previously unselected package ${packageName}.
+(Reading database ... 2500 files and directories currently installed.)
+Preparing to unpack .../${packageName}_1.0_amd64.deb ...
+Unpacking ${packageName} (1.0) ...
+Setting up ${packageName} (1.0) ...
+Processing triggers for man-db (2.9.1-1) ...
+`;
+                    if (packageName !== 'paquete-desconocido') {
+                        INSTALLED_PACKAGES.push(packageName);
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    return output;
+                }
+                if (args[0] === 'poweroff') {
+                    return `
+*** SYSTEM SHUTDOWN INITIATED ***
+  
+        __  __ 
+       |  \\/  |
+       | \\  / |
+       | |\\/| |
+       | |  | |
+       |_|  |_|
+  
+Simulación terminada. Escribe 'clear' para reiniciar.`;
+                }
+                return `bash: sudo: ${args.join(' ')}: Comando no reconocido o permisos insuficientes.`;
+            }
+        },
+
         // --- Comandos de Ciberseguridad/Redes (Simulados y API) ---
+        'login': {
+            logic: (args) => {
+                const user = args[0] || 'luigi';
+                userName = user;
+                return `Login successful. Session initiated for user ${userName}. (Prompt actualizado)`;
+            }
+        },
         'ip-lookup': {
             logic: async (args) => {
                 const target = args[0];
@@ -221,6 +289,38 @@ Timezone: ${data.timezone}
                 }
             }
         },
+        'date-lookup': {
+            logic: async (args) => {
+                const city = args[0] || 'europe/madrid';
+                if (!city) return 'Error: Faltó el argumento [city]. Uso: date-lookup [region/city]';
+
+                const API_URL = `http://worldtimeapi.org/api/timezone/${city}`;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                try {
+                    const response = await fetch(API_URL);
+                    
+                    if (response.status === 404) {
+                         return `Error 404: Zona horaria '${city}' no encontrada.`;
+                    }
+                    
+                    const data = await response.json();
+                    const datetime = new Date(data.datetime);
+                    
+                    return `
+[Time Lookup: ${data.timezone}]
+========================================
+Fecha/Hora: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
+Código UTC: ${data.utc_offset}
+Día de la semana: ${data.day_of_week}
+(Consulta API de hora en tiempo real)
+`;
+
+                } catch (error) {
+                    return `CRITICAL ERROR: No se pudo conectar a la API de tiempo global.`;
+                }
+            }
+        },
         'ping': {
             logic: (args) => {
                 const target = args[0] || 'localhost';
@@ -231,7 +331,6 @@ PING ${target} (${target}): 56 data bytes
 64 bytes from ${target}: icmp_seq=3 ttl=64 time=0.112 ms
 --- ${target} ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2002ms
-rtt min/avg/max/mdev = 0.090/0.100/0.112/0.009 ms
 `;
             }
         },
@@ -246,12 +345,6 @@ traceroute to ${target} (${target}), 30 hops max, 60 byte packets
  4  * * * (Timeout, Firewall/ACL simulation)
  5  target-network (${target})  35.120 ms  35.200 ms  35.300 ms
 `;
-            }
-        },
-        'ssh': {
-            logic: (args) => {
-                const target = args[0] || 'root@server';
-                return `ssh: connect to host ${target} port 22: Connection refused (Puerto cerrado/Hardening activo)`;
             }
         },
         'netstat': {
@@ -325,68 +418,6 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         inet 127.0.0.1  mask 255.0.0.0
 `
         },
-        'sysctl': {
-            logic: (args) => {
-                const target = args[0];
-                if (!target) return 'Error: Faltó el argumento [param]. Uso: sysctl net.ipv4.ip_forward';
-                return `net.ipv4.ip_forward = 0 (Política de seguridad aplicada)`;
-            }
-        },
-        'iptables': {
-            output: `
-Chain INPUT (policy ACCEPT)
-target     prot opt source               destination         
-ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
-ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:https
-DROP       all  --  anywhere             anywhere             (Política de denegación por defecto)
-`
-        },
-        'ss': {
-            output: `
-State       Recv-Q Send-Q Local Address:Port   Peer Address:Port
-LISTEN      0      128    127.0.0.1:8080       *:*
-ESTAB       0      0      192.168.1.10:443     93.184.216.34:58765
-`
-        },
-        'mount': {
-            output: `
-/dev/sda1 on / type ext4 (rw,relatime)
-/dev/md0 on /mnt/raid1 type ext4 (rw,relatime,data=ordered) (Simulación RAID)
-`
-        },
-        'df': {
-            output: `
-Filesystem     Size  Used Avail Use% Mounted on
-/dev/sda1       47G  9.1G  36G  21% /
-/dev/md0       1.8T  1.2T 600G  67% /mnt/raid1
-`
-        },
-        'ps': {
-            output: `
-PID TTY      TIME CMD
-  1 ?        00:00:01 systemd
- 12 ?        00:00:00 rsyslogd (Log Management)
- 55 ?        00:00:00 nginx (Web Server)
-`
-        },
-        'journalctl': {
-            logic: (args) => {
-                const target = args[0] || '-n 5';
-                return `
--- Logs simulados de servicio --
-Nov 21 08:00:01 portfolio-sys systemd[1]: Started Session 2 of user.
-Nov 21 08:00:15 portfolio-sys kernel: TCP: request_sock_TCP: dropped connection (Simulación de ataque/anomalía)
-Nov 21 08:00:20 portfolio-sys sshd[1234]: Accepted password for user
-`;
-            }
-        },
-        'login': {
-            logic: (args) => {
-                const user = args[0] || 'luigi';
-                userName = user;
-                return `Login successful. Session initiated for user ${userName}. (Prompt actualizado)`;
-            }
-        },
         'check-raid': {
             output: `
 [RAID Status Check - Alta Disponibilidad]
@@ -395,24 +426,6 @@ Status: **CLEAN**
 Disks: 2/2 (sda1, sdb1)
 Capacity: 2TB
 `
-        },
-        'sudo': { 
-            logic: (args) => {
-                if (args[0] === 'poweroff') {
-                    return `
-*** SYSTEM SHUTDOWN INITIATED ***
-  
-        __  __ 
-       |  \\/  |
-       | \\  / |
-       | |\\/| |
-       | |  | |
-       |_|  |_|
-  
-Simulación terminada. Escribe 'clear' para reiniciar.`;
-                }
-                return 'sudo: Comando no reconocido o permisos insuficientes.';
-            }
         },
         'clear': {
             logic: () => {
@@ -430,6 +443,9 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
     async function handleCommand(commandLine) {
         if (!commandLine) return;
 
+        const timestamp = new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        auditLog.push(`[${timestamp}] ${userName}@portfolio: ${commandLine}`);
+        
         outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input">${commandLine}</span></p>`;
 
         const parts = commandLine.trim().split(/\s+/);
@@ -446,16 +462,19 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
             return;
         }
 
-        if (cmdHandler) {
+        if (command === 'sudo') {
+             output = await cmdHandler.logic(args);
+             latency = 100;
+        } else if (cmdHandler) {
             if (cmdHandler.logic) {
                 if (command === 'ip-lookup' || command === 'nmap') latency = 2500;
-                if (command === 'cd' || command === 'rm' || command === 'touch') skipOutput = true; 
+                if (['cd', 'rm', 'touch', 'login'].includes(command)) skipOutput = true; 
                 output = await cmdHandler.logic(args); 
             } else if (cmdHandler.output) {
                 output = cmdHandler.output;
             }
         } else {
-            output = `<span style="color: #ff5f56;">bash: ${command}: command not found.</span> Escribe 'help' para ver la lista de comandos.`;
+            output = `<span style="color: #ff5f56;">bash: ${command}: command not found</span>`;
         }
 
         if (skipOutput && !output) {
@@ -479,28 +498,24 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
     // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
     
     async function initialLoadSequence() {
-        const initialP = document.createElement('p');
-        initialP.innerHTML = `${getPromptHTML()} <span class="input" id="initialInput">cat skills.txt</span>`;
-        outputElement.appendChild(initialP);
-
-        typingElement.innerHTML = ''; 
-
-        await typeWriterEffect(typingElement, INITIAL_LOAD.trim());
+        // 🛑 PUNTO DE CORRECCIÓN: Eliminamos el focus() al final de esta función
+        const initialMessage = "Escribe 'help' para ver los comandos disponibles";
+        
+        outputElement.innerHTML += `<p>${initialMessage}</p>`;
+        
         appendNewPrompt();
-        inputElement.focus();
+        // inputElement.focus(); <--- ELIMINADO PARA EVITAR EL TECLADO EN MÓVIL
     }
 
     function initializeConsole() {
         if (initialized) return; 
         initialized = true;
 
-        document.getElementById('typingEffect').classList.remove('blink');
+        const typingElement = document.getElementById('typingEffect');
+        if (typingElement) typingElement.classList.remove('blink');
 
         inputElement.disabled = true; 
-        initialLoadSequence().then(() => {
-            inputElement.disabled = false;
-            inputElement.focus();
-        });
+        initialLoadSequence();
 
         demoSection.removeEventListener('mouseover', initializeConsole);
     }
