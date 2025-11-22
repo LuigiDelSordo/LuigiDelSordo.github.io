@@ -533,6 +533,21 @@ Capacity: 2TB
         appendNewPrompt();
         inputElement.focus();
     }
+
+    function initializeConsole() {
+    if (initialized) return;
+    initialized = true;
+
+    // Aseguramos que los elementos existan si el HTML no los tiene
+    const typingElement = document.getElementById('typingEffect');
+    if (typingElement) typingElement.classList.remove('blink');
+
+    inputElement.disabled = true;
+    // Llamada a la secuencia que hace el efecto de máquina de escribir
+    initialLoadSequence();
+
+    demoSection.removeEventListener('mouseover', initializeConsole);
+}
     
     // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
     
@@ -558,7 +573,7 @@ Capacity: 2TB
 
         inputElement.disabled = false;
     }
-
+    
     function initializeConsole() {
     if (initialized) return;
     initialized = true;
@@ -573,15 +588,16 @@ Capacity: 2TB
     }
     
     // --- INICIALIZACIÓN ---
-    demoSection.addEventListener('mouseover', initializeConsole);
+   demoSection.addEventListener('mouseover', initializeConsole);
 
     inputElement.addEventListener('keydown', (e) => {
+        // Esta es la parte que NO funcionaba porque handleCommand no era visible.
         if (e.key === 'Enter' && !inputElement.disabled) {
             const commandLine = inputElement.value.trim();
-            inputElement.value = ''; 
-            handleCommand(commandLine);
+            inputElement.value = '';
+            handleCommand(commandLine); // Ahora handleCommand es visible
         }
     });
-
-    inputElement.disabled = true; 
-});
+    
+    inputElement.disabled = true;
+    });
