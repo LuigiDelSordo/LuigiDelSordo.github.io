@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDir = '/';
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
-    const SPEED = 1; 
+    const SPEED = 5; 
     const RESERVED_IPS = ['127.0.0.1', '192.168.1.1', '8.8.8.8'];
     const DUMMY_HOSTS = ['google.com', 'luigidelsordo.com'];
 
@@ -450,14 +450,25 @@ Capacity: 2TB
 `
         },
         'clear': {
-            logic: () => {
-                outputElement.innerHTML = '';
-                inputElement.disabled = true;
-                initialLoadSequence();
-                return null;
-            }
+        logic: () => {
+        outputElement.innerHTML = '';
+        
+        // 🛑 NUEVA LÓGICA DE SCROLL: Mover la pantalla suavemente a la consola
+        const consoleElement = document.getElementById('demonstration');
+        if (consoleElement) {
+            consoleElement.scrollIntoView({
+                behavior: 'smooth', // Hace el desplazamiento suave
+                block: 'start'      // Coloca la consola en la parte superior de la ventana
+            });
         }
-    };
+        
+        inputElement.disabled = true;
+        initialLoadSequence();
+        
+        // inputElement.disabled = false; (La habilitación ya ocurre dentro de initialLoadSequence)
+        return null;
+    }
+    }
 
     // --- FUNCIÓN PRINCIPAL DE MANEJO DE COMANDOS ---
 
