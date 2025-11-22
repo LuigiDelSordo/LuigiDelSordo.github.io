@@ -53,28 +53,33 @@ LISTADO DE HABILIDADES (cat skills.txt)
     }
 
     function typeWriterEffect(element, text) {
-        return new Promise(resolve => {
-            let i = 0;
-            element.innerHTML = '';
-            element.classList.add('blink');
-            
-            function typing() {
-                if (i < text.length) {
-                    const char = text.charAt(i);
-                    if (char === '<' || char === '>') { }
-                    element.innerHTML += char.replace(/\n/g, '<br>');
-                    i++;
-                    setTimeout(typing, SPEED);
-
-                    // 🛑 CORRECCIÓN: Desplazar la ventana del navegador si el contenido crece
-                    window.scrollTo(0, document.body.scrollHeight);
-                    
-                } else {
-                    element.classList.remove('blink');
-                    resolve();
-                }
+    return new Promise(resolve => {
+        let i = 0;
+        element.innerHTML = ''; 
+        element.classList.add('blink');
+        
+        function typing() {
+            if (i < text.length) {
+                const char = text.charAt(i);
+                
+                // Añadimos el carácter o el salto de línea
+                element.innerHTML += char.replace(/\n/g, '<br>');
+                i++;
+                
+                // 🛑 CORRECCIÓN: Forzar el scroll de la ventana al borde inferior del output
+                // Esto es más estable que usar document.body.scrollHeight.
+                window.scrollTo({
+                    top: outputElement.offsetHeight + outputElement.offsetTop,
+                    behavior: 'auto' 
+                });
+                
+                setTimeout(typing, SPEED);
+            } else {
+                element.classList.remove('blink');
+                resolve();
             }
-            typing();
+        }
+        typing();
         });
     }
 
