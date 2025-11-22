@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDir = '/';
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
-    const SPEED = 10; 
+    const SPEED = 1; 
     const RESERVED_IPS = ['127.0.0.1', '192.168.1.1', '8.8.8.8'];
     const DUMMY_HOSTS = ['google.com', 'luigidelsordo.com'];
 
@@ -55,25 +55,30 @@ LISTADO DE HABILIDADES (cat skills.txt)
     }
 
     function typeWriterEffect(element, text) {
-    return new Promise(resolve => {
-        let i = 0;
-        // 🛑 CORRECCIÓN CLAVE: Limpia el contenido del elemento ANTES de escribir
-        element.innerHTML = ''; 
-        element.classList.add('blink');
-        
-        function typing() {
-            if (i < text.length) {
-                element.innerHTML += text.charAt(i).replace(/\n/g, '<br>');
-                i++;
-                setTimeout(typing, SPEED);
-            } else {
-                element.classList.remove('blink');
-                resolve();
+        return new Promise(resolve => {
+            let i = 0;
+            // 🛑 CORRECCIÓN: Limpiamos el contenido del elemento ANTES de escribir
+            element.innerHTML = ''; 
+            element.classList.add('blink');
+            
+            function typing() {
+                if (i < text.length) {
+                    // Permitimos que el HTML pase, aunque se escribirá lentamente.
+                    const char = text.charAt(i);
+                    if (char === '<' || char === '>') { 
+                        // Esto permite que las etiquetas como <span> pasen en el output.
+                    }
+                    element.innerHTML += char.replace(/\n/g, '<br>');
+                    i++;
+                    setTimeout(typing, SPEED);
+                } else {
+                    element.classList.remove('blink');
+                    resolve();
+                }
             }
-        }
-        typing();
-    });
-}
+            typing();
+        });
+    }
 
     function appendNewPrompt() {
         outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input"></span></p>`;
@@ -93,29 +98,29 @@ SINTAXIS
 
 DESCRIPCIÓN
     Comandos de Archivos y Sistema:
-        cd [dir]        Cambia el directorio.
-        ls              Lista archivos/directorios.
-        cat [archivo]   Muestra contenido.
-        touch [archivo] Crea archivo vacío.
-        rm [archivo]    Elimina archivo.
-        clear           Limpia la pantalla.
-        whoami          Muestra el usuario.
-        login [user]    Inicia sesión.
+        cd [dir]                Cambia el directorio.
+        ls                      Lista archivos/directorios.
+        cat [archivo]           Muestra contenido.
+        touch [archivo]         Crea archivo vacío.
+        rm [archivo]            Elimina archivo.
+        clear                   Limpia la pantalla.
+        whoami                  Muestra el usuario.
+        login [user]            Inicia sesión.
 
     Comandos de Redes y Diagnóstico (Simulación Avanzada):
-        ping [ip/host]  Chequea conectividad (simula latencia real).
-        netstat         Muestra conexiones y puertos.
-        ifconfig        Muestra configuración de interfaz.
-        traceroute [h]  Simula traza de ruta.
-        nmap [ip]       Simula escaneo de puertos.
-        dig [host]      Consulta DNS.
-        arp             Muestra tabla ARP.
+        ping [ip/host]          Chequea conectividad (simula latencia real).
+        netstat                 Muestra conexiones y puertos.
+        ifconfig                Muestra configuración de interfaz.
+        traceroute [h]          Simula traza de ruta.
+        nmap [ip]               Simula escaneo de puertos.
+        dig [host]              Consulta DNS.
+        arp                     Muestra tabla ARP.
 
     Comandos Avanzados:
-        sudo apt [arg]  Simulación de gestor de paquetes.
-        ip-lookup [ip]  Consulta API de geolocalización (Dato Real).
-        check-raid      Muestra estado de HA.
-        sudo poweroff   Apagado del sistema.
+        sudo apt install [arg]  Simulación de gestor de paquetes.
+        ip-lookup [ip]          Consulta API de geolocalización (Dato Real).
+        check-raid              Muestra estado de HA.
+        sudo poweroff           Apagado del sistema.
 `
         },
         'whoami': { output: `${userName}` }, // Solo el usuario para ser más fiel a Linux
@@ -259,12 +264,12 @@ Processing triggers for man-db (2.9.1-1) ...
                     return `
 *** SYSTEM SHUTDOWN INITIATED ***
   
-        __   __ 
+        __  __ 
        |  \\/  |
        | \\  / |
        | |\\/| |
-       | |   | |
-       |_|   |_|
+       | |  | |
+       |_|  |_|
   
 Simulación terminada. Escribe 'clear' para reiniciar.`;
                 }
@@ -280,12 +285,15 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
                 return `Login successful for user ${userName}. Prompt updated.`;
             }
         },
+        
         'ip-lookup': {
             logic: async (args) => {
                 const target = args[0];
                 if (!target) return 'ip-lookup: missing host argument';
 
-                const API_URL = `http://ip-api.com/json/${target}`;
+                // API_URL debe usar HTTPS si es posible, aunque ip-api.com a menudo solo funciona con HTTP
+                // Lo mantendremos en HTTP por compatibilidad de la API, pero puede fallar en entornos estrictos.
+                const API_URL = `http://ip-api.com/json/${target}`; 
                 await new Promise(resolve => setTimeout(resolve, 1500)); 
 
                 try {
@@ -305,11 +313,45 @@ Timezone: ${data.timezone}
 (Real Data API Call)
 `
                     } else {
+                        // Devuelve un mensaje de error más específico de la API
                         return `ip-lookup: Error resolving host: ${data.message || 'Host not found.'}`;
                     }
 
                 } catch (error) {
-                    return `ip-lookup: CRITICAL ERROR: Could not connect to external service.`;
+                    // Este catch maneja fallos de red (timeouts, CORS)
+                    return 'ip-lookup: CRITICAL ERROR: Check network connection or try a different IP.';
+                }
+            }
+        },
+        // 🛑 CORRECCIÓN: Definición del comando date-lookup (que faltaba)
+        'date-lookup': {
+            logic: async (args) => {
+                // Si no se da una ciudad, por defecto se usa Madrid.
+                const city = args[0] || 'europe/madrid'; 
+                if (!city) return 'date-lookup: missing city argument';
+
+                const API_URL = `http://worldtimeapi.org/api/timezone/${city}`;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                try {
+                    const response = await fetch(API_URL);
+                    
+                    if (response.status === 404) { return `date-lookup: Error 404: Zone '${city}' not found.`; }
+                    
+                    const data = await response.json();
+                    const datetime = new Date(data.datetime);
+                    
+                    return `
+            [Time Lookup: ${data.timezone}]
+            ========================================
+            Date/Time: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
+            UTC Code: ${data.utc_offset}
+            (Real Data API Call)
+            `;
+
+                } catch (error) {
+                    // Este catch maneja fallos de red
+                    return 'date-lookup: CRITICAL ERROR: Could not connect to external service.';
                 }
             }
         },
@@ -452,10 +494,23 @@ Capacity: 2TB
             } else if (cmdHandler.output) {
                 output = cmdHandler.output;
             }
-        } else {
-        // 🛑 Modificamos el output para que se añada directamente, sin efecto de escritura.
-        output = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
-        outputElement.innerHTML += output;
+        } } else {
+            // 🛑 CORRECCIÓN DEL ERROR DE FORMATO Y SALTO DEL EFECTO DE ESCRITURA
+            // Creamos el error con el formato estricto de Linux.
+            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
+            
+            // 1. Imprimimos el error directamente (sin typeWriterEffect)
+            outputElement.innerHTML += errorOutput;
+            
+            // 2. Añadimos el nuevo prompt
+            appendNewPrompt();
+            
+            // 3. Enfocamos la entrada para que el usuario pueda escribir
+            inputElement.focus();
+            
+            // 4. Salimos de la función inmediatamente
+            return;
+        }
         
         // Saltamos el efecto de escritura
         appendNewPrompt();
