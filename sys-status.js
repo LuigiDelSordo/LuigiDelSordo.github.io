@@ -257,12 +257,12 @@ Processing triggers for man-db (2.9.1-1) ...
                     return `
 *** SYSTEM SHUTDOWN INITIATED ***
   
-        __  __ 
+        __   __ 
        |  \\/  |
        | \\  / |
        | |\\/| |
-       | |  | |
-       |_|  |_|
+       | |   | |
+       |_|   |_|
   
 Simulación terminada. Escribe 'clear' para reiniciar.`;
                 }
@@ -410,7 +410,6 @@ Capacity: 2TB
                 outputElement.innerHTML = '';
                 inputElement.disabled = true;
                 initialLoadSequence();
-                inputElement.disabled = false;
                 return null;
             }
         }
@@ -494,18 +493,21 @@ Capacity: 2TB
         outputElement.appendChild(helpMessageP);
         
         appendNewPrompt();
+
+        inputElement.disabled = false;
     }
 
     function initializeConsole() {
-        if (initialized) return; 
-        initialized = true;
+    if (initialized) return;
+    initialized = true;
 
-        if (typingElement) typingElement.classList.remove('blink');
+    if (typingElement) typingElement.classList.remove('blink');
 
-        inputElement.disabled = true; 
-        initialLoadSequence();
+    inputElement.disabled = true; 
+    // Llamamos a la secuencia que manejará el typing y la habilitación
+    initialLoadSequence(); 
 
-        demoSection.removeEventListener('mouseover', initializeConsole);
+    demoSection.removeEventListener('mouseover', initializeConsole);
     }
     
     // --- INICIALIZACIÓN ---
