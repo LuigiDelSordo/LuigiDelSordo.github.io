@@ -284,7 +284,7 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
                 const target = args[0];
                 if (!target) return 'ip-lookup: missing host argument';
 
-                const API_URL = `http://ip-api.com/json/${target}`;
+                const API_URL = `https://ip-api.com/json/${target}`;
                 await new Promise(resolve => setTimeout(resolve, 1500)); 
 
                 try {
@@ -317,7 +317,7 @@ Timezone: ${data.timezone}
                 const city = args[0] || 'europe/madrid';
                 if (!city) return 'date-lookup: missing city argument';
 
-                const API_URL = `http://worldtimeapi.org/api/timezone/${city}`;
+                const API_URL = `https://worldtimeapi.org/api/timezone/${city}`;
                 await new Promise(resolve => setTimeout(resolve, 1000));
 
                 try {
