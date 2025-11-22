@@ -65,6 +65,10 @@ LISTADO DE HABILIDADES (cat skills.txt)
                     element.innerHTML += char.replace(/\n/g, '<br>');
                     i++;
                     setTimeout(typing, SPEED);
+
+                    // 🛑 CORRECCIÓN: Desplazar la ventana del navegador si el contenido crece
+                    window.scrollTo(0, document.body.scrollHeight);
+                    
                 } else {
                     element.classList.remove('blink');
                     resolve();
