@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- VARIABLES DE ESTADO ---
+    // --- 1. VARIABLES DE ESTADO Y ELEMENTOS DOM ---
     let currentDir = '/';
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const RESERVED_IPS = ['127.0.0.1', '192.168.1.1', '8.8.8.8'];
     const DUMMY_HOSTS = ['google.com', 'luigidelsordo.com'];
 
-    // --- SISTEMA DE ARCHIVOS VIRTUAL ---
     const fileSystem = {
         '/': { files: ['readme.md', 'projects.list'], dirs: ['bin', 'sys', 'home', 'etc'] },
         '/sys': { files: [], dirs: ['net', 'security'] },
@@ -41,14 +40,13 @@ LISTADO DE HABILIDADES (cat skills.txt)
 - Web: HTML, CSS, JavaScript, PHP
 `;
 
-    // --- ELEMENTOS DEL DOM ---
     const outputElement = document.getElementById('terminalOutput');
     const inputElement = document.getElementById('commandInput');
     const demoSection = document.getElementById('demonstration');
     const typingElement = document.getElementById('typingEffect');
     let initialized = false; 
 
-    // --- FUNCIONES DE UTILIDAD ---
+    // --- 2. FUNCIONES DE BAJO NIVEL (UTILIDADES) ---
 
     function getPromptHTML() {
         return `<span class="prompt">${userName}@portfolio-sys:${currentDir}$</span>`;
@@ -57,16 +55,13 @@ LISTADO DE HABILIDADES (cat skills.txt)
     function typeWriterEffect(element, text) {
         return new Promise(resolve => {
             let i = 0;
-            // 🛑 CORRECCIÓN: Limpiamos el contenido del elemento ANTES de escribir
-            element.innerHTML = ''; 
+            element.innerHTML = '';
             element.classList.add('blink');
             
             function typing() {
                 if (i < text.length) {
-                    // Permitimos que el HTML pase, aunque se escribirá lentamente.
                     const char = text.charAt(i);
                     if (char === '<' || char === '>') { 
-                        // Esto permite que las etiquetas como <span> pasen en el output.
                     }
                     element.innerHTML += char.replace(/\n/g, '<br>');
                     i++;
@@ -85,7 +80,8 @@ LISTADO DE HABILIDADES (cat skills.txt)
         outputElement.scrollTop = outputElement.scrollHeight;
     }
 
-    // --- LÓGICA DE COMANDOS ---
+
+    // --- 3. LÓGICA DE COMANDOS (COMMAND_MAP) ---
 
     const COMMAND_MAP = {
         'help': {
@@ -98,34 +94,34 @@ SINTAXIS
 
 DESCRIPCIÓN
     Comandos de Archivos y Sistema:
-        cd [dir]                Cambia el directorio.
-        ls                      Lista archivos/directorios.
-        cat [archivo]           Muestra contenido.
-        touch [archivo]         Crea archivo vacío.
-        rm [archivo]            Elimina archivo.
-        clear                   Limpia la pantalla.
-        whoami                  Muestra el usuario.
-        login [user]            Inicia sesión.
+        cd [dir]        Cambia el directorio.
+        ls              Lista archivos/directorios.
+        cat [archivo]   Muestra contenido.
+        touch [archivo] Crea archivo vacío.
+        rm [archivo]    Elimina archivo.
+        clear           Limpia la pantalla.
+        whoami          Muestra el usuario.
+        login [user]    Inicia sesión.
 
     Comandos de Redes y Diagnóstico (Simulación Avanzada):
-        ping [ip/host]          Chequea conectividad (simula latencia real).
-        netstat                 Muestra conexiones y puertos.
-        ifconfig                Muestra configuración de interfaz.
-        traceroute [h]          Simula traza de ruta.
-        nmap [ip]               Simula escaneo de puertos.
-        dig [host]              Consulta DNS.
-        arp                     Muestra tabla ARP.
+        ping [ip/host]  Chequea conectividad (simula latencia real).
+        netstat         Muestra conexiones y puertos.
+        ifconfig        Muestra configuración de interfaz.
+        traceroute [h]  Simula traza de ruta.
+        nmap [ip]       Simula escaneo de puertos.
+        dig [host]      Consulta DNS.
+        arp             Muestra tabla ARP.
 
     Comandos Avanzados:
-        sudo apt install [arg]  Simulación de gestor de paquetes.
-        ip-lookup [ip]          Consulta API de geolocalización (Dato Real).
-        check-raid              Muestra estado de HA.
-        sudo poweroff           Apagado del sistema.
+        sudo apt [arg]  Simulación de gestor de paquetes.
+        ip-lookup [ip]  Consulta API de geolocalización (Dato Real).
+        date-lookup [city] - Consulta la hora en tiempo real (Real API).
+        check-raid      Muestra estado de HA.
+        sudo poweroff   Apagado del sistema.
 `
         },
-        'whoami': { output: `${userName}` }, // Solo el usuario para ser más fiel a Linux
+        'whoami': { output: `${userName}` },
         
-        // --- Comandos de Sistema de Archivos ---
         'cd': {
             logic: (args) => {
                 const target = args[0];
@@ -224,7 +220,6 @@ DESCRIPCIÓN
             }
         },
         
-        // --- Comandos de Instalación/Actualización (Simulación) ---
         'sudo': {
             logic: async (args) => {
                 if (args[0] === 'apt' && args[1] === 'update') {
@@ -248,8 +243,6 @@ Reading package lists... Done
 Building dependency tree... Done
 The following NEW packages will be installed:
   ${packageName} libssl-dev
-Need to get 15.5 MB of archives.
-Get:1 http://es.archive.ubuntu.com/ubuntu/pool/main/d/${packageName} ${packageName}_1.0_amd64.deb [2.5 MB]
 Progress: [██████████████████████████████████] 100%
 Setting up ${packageName} (1.0) ...
 Processing triggers for man-db (2.9.1-1) ...
@@ -273,11 +266,10 @@ Processing triggers for man-db (2.9.1-1) ...
   
 Simulación terminada. Escribe 'clear' para reiniciar.`;
                 }
-                return `sudo: command not found`; // Error estricto de sudo
+                return `sudo: command not found`;
             }
         },
 
-        // --- Comandos de Ciberseguridad/Redes (Simulación Avanzada) ---
         'login': {
             logic: (args) => {
                 const user = args[0] || 'luigi';
@@ -291,9 +283,7 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
                 const target = args[0];
                 if (!target) return 'ip-lookup: missing host argument';
 
-                // API_URL debe usar HTTPS si es posible, aunque ip-api.com a menudo solo funciona con HTTP
-                // Lo mantendremos en HTTP por compatibilidad de la API, pero puede fallar en entornos estrictos.
-                const API_URL = `http://ip-api.com/json/${target}`; 
+                const API_URL = `http://ip-api.com/json/${target}`;
                 await new Promise(resolve => setTimeout(resolve, 1500)); 
 
                 try {
@@ -313,21 +303,17 @@ Timezone: ${data.timezone}
 (Real Data API Call)
 `
                     } else {
-                        // Devuelve un mensaje de error más específico de la API
                         return `ip-lookup: Error resolving host: ${data.message || 'Host not found.'}`;
                     }
 
                 } catch (error) {
-                    // Este catch maneja fallos de red (timeouts, CORS)
                     return 'ip-lookup: CRITICAL ERROR: Check network connection or try a different IP.';
                 }
             }
         },
-        // 🛑 CORRECCIÓN: Definición del comando date-lookup (que faltaba)
         'date-lookup': {
             logic: async (args) => {
-                // Si no se da una ciudad, por defecto se usa Madrid.
-                const city = args[0] || 'europe/madrid'; 
+                const city = args[0] || 'europe/madrid';
                 if (!city) return 'date-lookup: missing city argument';
 
                 const API_URL = `http://worldtimeapi.org/api/timezone/${city}`;
@@ -342,15 +328,14 @@ Timezone: ${data.timezone}
                     const datetime = new Date(data.datetime);
                     
                     return `
-            [Time Lookup: ${data.timezone}]
-            ========================================
-            Date/Time: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
-            UTC Code: ${data.utc_offset}
-            (Real Data API Call)
-            `;
+[Time Lookup: ${data.timezone}]
+========================================
+Date/Time: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
+UTC Code: ${data.utc_offset}
+(Real Data API Call)
+`;
 
                 } catch (error) {
-                    // Este catch maneja fallos de red
                     return 'date-lookup: CRITICAL ERROR: Could not connect to external service.';
                 }
             }
@@ -360,7 +345,6 @@ Timezone: ${data.timezone}
                 const target = args[0];
                 if (!target) return 'ping: usage error: destination address required';
 
-                // Simulación de latencia basada en el host
                 if (RESERVED_IPS.includes(target) || DUMMY_HOSTS.includes(target)) {
                     return `
 PING ${target} (${target}): 56 data bytes
@@ -371,7 +355,6 @@ PING ${target} (${target}): 56 data bytes
 3 packets transmitted, 3 received, 0% packet loss, time 2002ms
 `;
                 } else {
-                    // Simulación de fallo de conexión para IPs externas/desconocidas
                     return `
 PING ${target} (${target}): 56 data bytes
 Request timeout for icmp_seq 1
@@ -383,126 +366,21 @@ Request timeout for icmp_seq 3
                 }
             }
         },
-        'traceroute': {
-            logic: (args) => {
-                const target = args[0] || 'google.com';
-                return `
-traceroute to ${target} (${target}), 30 hops max, 60 byte packets
- 1  router (192.168.1.1)  0.450 ms  0.500 ms  0.620 ms
- 2  isp-fw (10.0.0.1)  5.120 ms  5.230 ms  5.300 ms
- 3  core-router-a (1.2.3.4)  12.300 ms  12.400 ms  12.500 ms
- 4  * * * (Timeout, Router/Firewall ACL simulation)
- 5  target-network (${target})  35.120 ms  35.200 ms  35.300 ms
-`;
-            }
-        },
-        'nmap': {
-            logic: (args) => {
-                const target = args[0];
-                if (!target) return 'nmap: missing host argument';
-                return `
-Nmap scan report for ${target} (Simulated 3s delay)
-Host is up.
-PORT      STATE SERVICE
-22/tcp    filtered ssh (Firewall/Hardened)
-80/tcp    closed  http
-443/tcp   open    https (Cifrado requerido)
-53/tcp    open    domain (DNS Server)
-`;
-            }
-        },
-        'dig': {
-            logic: (args) => {
-                const target = args[0] || 'google.com';
-                return `
-; <<>> DiG 9.10.3-P4 <<>> ${target}
-;; ANSWER SECTION:
-${target}. 300 IN A 142.250.78.14
-;; AUTHORITY SECTION:
-google.com. 172800 IN NS ns1.google.com.
-`;
-            }
-        },
-        'netstat': {
-            output: `
-Proto Local Address           Foreign Address         State
-TCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)
-TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)
-UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
-`
-        },
-        'ifconfig': {
-            output: `
-eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.1.10/24  broadcast 192.168.1.255
-        ether 00:1a:2b:3c:4d:5e  txqueuelen 1000  (Ethernet)
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  mask 255.0.0.0
-`
-        },
-        'check-raid': {
-            output: `
-[RAID Status Check - Alta Disponibilidad]
-Array: RAID1-DATA (md0)
-Status: **CLEAN**
-Disks: 2/2 (sda1, sdb1)
-Capacity: 2TB
-`
-        },
-        // Dentro del objeto COMMAND_MAP
-    'clear': {
-    logic: () => {
-        outputElement.innerHTML = '';
-        
-        // 🛑 LÓGICA DE SCROLL PARA CENTRAR LA CONSOLA (#demonstration)
-        const consoleElement = document.getElementById('demonstration');
-        if (consoleElement) {
-            // Usamos scrollIntoView con comportamiento 'smooth' para un efecto más pulido
-            consoleElement.scrollIntoView({
-                behavior: 'smooth', 
-                block: 'start'      
-            });
-        }
-        
-        inputElement.disabled = true;
-        initialLoadSequence();
-        
-        return null; // Devolvemos null para indicar que el comando no tiene output de texto
-    }
-    }
- 
-    // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
+        'traceroute': { logic: (args) => { const target = args[0] || 'google.com'; return `traceroute to ${target} (${target}), 30 hops max\n 1  router (192.168.1.1)  0.450 ms\n 2  isp-fw (10.0.0.1)  5.120 ms\n 3  core-router-a (1.2.3.4)  12.300 ms\n 4  * * * (Timeout, Router/Firewall ACL simulation)\n 5  target-network (${target})  35.120 ms`; } },
+        'nmap': { logic: (args) => { const target = args[0]; if (!target) return 'nmap: missing host argument'; return `Nmap scan report for ${target} (Simulated 3s delay)\nHost is up.\nPORT      STATE SERVICE\n22/tcp    filtered ssh (Firewall)\n443/tcp   open    https (Cifrado requerido)\n53/tcp    open    domain (DNS Server)`; } },
+        'dig': { logic: (args) => { const target = args[0] || 'google.com'; return `; <<>> DiG 9.10.3-P4 <<>> ${target}\n;; ANSWER SECTION:\n${target}. 300 IN A 142.250.78.14\n;; AUTHORITY SECTION:\ngoogle.com. 172800 IN NS ns1.google.com.`; } },
+        'netstat': { output: `Proto Local Address           Foreign Address         State\nTCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)\nTCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)` },
+        'ifconfig': { output: `eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.10/24  broadcast 192.168.1.255\n        ether 00:1a:2b:3c:4d:5e  txqueuelen 1000  (Ethernet)` },
+        'check-raid': { output: `[RAID Status Check - Alta Disponibilidad]\nArray: RAID1-DATA (md0)\nStatus: **CLEAN**\nDisks: 2/2 (sda1, sdb1)\nCapacity: 2TB` },
+        'clear': { logic: () => { outputElement.innerHTML = ''; inputElement.disabled = true; initialLoadSequence(); return null; } }
+    };
     
-    async function initialLoadSequence() {
-        // 1. Mostrar el prompt con el comando que simula la carga de habilidades
-        const initialCommandP = document.createElement('p');
-        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input">cat skills.txt</span>`;
-        outputElement.appendChild(initialCommandP);
-
-        // 2. Ejecutar el efecto de máquina de escribir con las habilidades
-        const outputP = document.createElement('p');
-        outputP.classList.add('output');
-        outputElement.appendChild(outputP);
-        
-        await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
-
-        // 3. Restaurar el mensaje de help después de escribir las habilidades
-        const helpMessageP = document.createElement('p');
-        helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
-        outputElement.appendChild(helpMessageP);
-        
-        appendNewPrompt();
-
-        inputElement.disabled = false;
-    }
-
     // --- FUNCIÓN PRINCIPAL DE MANEJO DE COMANDOS ---
 
     async function handleCommand(commandLine) {
         if (!commandLine) return;
 
         const timestamp = new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-        // Asumiendo que auditLog está definido, si no, comentar la línea
         // auditLog.push(`[${timestamp}] ${userName}@portfolio: ${commandLine}`); 
         
         outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input">${commandLine}</span></p>`;
@@ -514,8 +392,8 @@ Capacity: 2TB
         const cmdHandler = COMMAND_MAP[command];
         let output = '';
         let latency = 500; 
-        let skipOutput = false; // Saltarse el efecto de escritura si es 'cd', 'rm', etc.
-        let outputIsHTML = false; // Para LS
+        let skipOutput = false;
+        let outputIsHTML = false; 
 
         if (command === 'clear') { 
             cmdHandler.logic();
@@ -525,9 +403,9 @@ Capacity: 2TB
         if (command === 'sudo') {
              output = await cmdHandler.logic(args);
              latency = 100;
-        } else if (cmdHandler) { // Comando reconocido (NO es sudo y NO es clear)
+        } else if (cmdHandler) { 
             
-            if (command === 'ls') outputIsHTML = true; // El LS siempre devuelve HTML coloreado
+            if (command === 'ls') outputIsHTML = true; 
             
             if (cmdHandler.logic) {
                  if (['ping', 'nmap', 'traceroute', 'ip-lookup', 'date-lookup'].includes(command)) latency = 2500;
@@ -537,8 +415,8 @@ Capacity: 2TB
                  output = cmdHandler.output;
             }
         } else { 
-            // 🛑 COMANDO NO ENCONTRADO (Bloque ELSE final)
-            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
+            // COMANDO NO ENCONTRADO
+            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command}: command not found</span></p>`;
             
             outputElement.innerHTML += errorOutput;
             appendNewPrompt();
@@ -546,7 +424,7 @@ Capacity: 2TB
             return;
         }
 
-        // --- LÓGICA DE SALIDA (Solo se ejecuta si el comando fue reconocido) ---
+        // --- LÓGICA DE SALIDA ---
 
         if (skipOutput && !output) {
             appendNewPrompt();
@@ -560,7 +438,6 @@ Capacity: 2TB
         outputP.classList.add('output');
         outputElement.appendChild(outputP);
         
-        // Imprimir HTML o usar efecto de escritura
         if (outputIsHTML) {
             outputP.innerHTML = output;
         } else {
@@ -570,46 +447,51 @@ Capacity: 2TB
         appendNewPrompt();
         inputElement.focus();
     }
-
-    function initializeConsole() {
-    if (initialized) return;
-    initialized = true;
-
-    // Aseguramos que los elementos existan si el HTML no los tiene
-    const typingElement = document.getElementById('typingEffect');
-    if (typingElement) typingElement.classList.remove('blink');
-
-    inputElement.disabled = true;
-    // Llamada a la secuencia que hace el efecto de máquina de escribir
-    initialLoadSequence();
-
-    demoSection.removeEventListener('mouseover', initializeConsole);
-}
     
+    // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
+    
+    async function initialLoadSequence() {
+        const initialCommandP = document.createElement('p');
+        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input">cat skills.txt</span>`;
+        outputElement.appendChild(initialCommandP);
+
+        const outputP = document.createElement('p');
+        outputP.classList.add('output');
+        outputElement.appendChild(outputP);
+        
+        await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
+
+        const helpMessageP = document.createElement('p');
+        helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
+        outputElement.appendChild(helpMessageP);
+        
+        appendNewPrompt();
+
+        inputElement.disabled = false;
+    }
+
     function initializeConsole() {
-    if (initialized) return;
-    initialized = true;
+        if (initialized) return;
+        initialized = true;
 
-    if (typingElement) typingElement.classList.remove('blink');
+        if (typingElement) typingElement.classList.remove('blink');
 
-    inputElement.disabled = true; 
-    // Llamamos a la secuencia que manejará el typing y la habilitación
-    initialLoadSequence(); 
+        inputElement.disabled = true;
+        initialLoadSequence();
 
-    demoSection.removeEventListener('mouseover', initializeConsole);
+        demoSection.removeEventListener('mouseover', initializeConsole);
     }
     
     // --- INICIALIZACIÓN ---
-   demoSection.addEventListener('mouseover', initializeConsole);
+    demoSection.addEventListener('mouseover', initializeConsole);
 
     inputElement.addEventListener('keydown', (e) => {
-        // Esta es la parte que NO funcionaba porque handleCommand no era visible.
         if (e.key === 'Enter' && !inputElement.disabled) {
             const commandLine = inputElement.value.trim();
             inputElement.value = '';
-            handleCommand(commandLine); // Ahora handleCommand es visible
+            handleCommand(commandLine);
         }
     });
     
     inputElement.disabled = true;
-    });
+});
