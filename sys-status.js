@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDir = '/';
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
-    const SPEED = 5; 
+    const SPEED = 10; 
     const RESERVED_IPS = ['127.0.0.1', '192.168.1.1', '8.8.8.8'];
     const DUMMY_HOSTS = ['google.com', 'luigidelsordo.com'];
 
@@ -66,11 +66,10 @@ LISTADO DE HABILIDADES (cat skills.txt)
                 element.innerHTML += char.replace(/\n/g, '<br>');
                 i++;
                 
-                // 🛑 CORRECCIÓN: Forzar el scroll de la ventana al borde inferior del output
-                // Esto es más estable que usar document.body.scrollHeight.
-                window.scrollTo({
-                    top: outputElement.offsetHeight + outputElement.offsetTop,
-                    behavior: 'auto' 
+               // Usamos scrollIntoView en el elemento más bajo de la consola (el input).
+                inputElement.scrollIntoView({
+                    behavior: 'auto', 
+                    block: 'end'      
                 });
                 
                 setTimeout(typing, SPEED);
