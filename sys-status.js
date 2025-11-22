@@ -80,12 +80,6 @@ LISTADO DE HABILIDADES (cat skills.txt)
     outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input"></span></p>`;
     outputElement.scrollTop = outputElement.scrollHeight;
     
-    // 🛑 CORRECCIÓN FINAL: Asegurar que el último elemento (el input) esté visible
-    // Esto es mucho más estable que usar window.scrollTo en el bucle de typing.
-    inputElement.scrollIntoView({
-        behavior: 'auto', // Scroll rápido para seguir el texto
-        block: 'center'      // Asegura que el input quede visible al final de la ventana
-    });
 }
 
 
