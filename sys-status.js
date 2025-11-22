@@ -478,11 +478,6 @@ Request timeout for icmp_seq 3
         } else {
             await typeWriterEffect(outputP, output.trim());
         }
-
-        inputElement.scrollIntoView({
-            behavior: 'smooth', // Desplazamiento suave (una sola vez)
-            block: 'end'        // Lleva el input al final del viewport
-        });
         
         appendNewPrompt();
         inputElement.focus();
