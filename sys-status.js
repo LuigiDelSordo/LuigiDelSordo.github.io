@@ -501,7 +501,7 @@ Capacity: 2TB
             }
         } else { 
             // 🛑 COMANDO NO ENCONTRADO (Bloque ELSE final)
-            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command}: command not found</span></p>`;
+            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
             
             outputElement.innerHTML += errorOutput;
             appendNewPrompt();
