@@ -390,25 +390,22 @@ Request timeout for icmp_seq 3
             },
            
             'clear': {
-        logic: () => {
-            outputElement.innerHTML = '';
-            
-            const consoleElement = demoSection; 
-            if (consoleElement) {
-                // Usa 'instant' para que no haya cálculo de offset, ya que el header es fijo.
-                // Esto salta directamente a la posición (block: 'start')
-                consoleElement.scrollIntoView({
-                    behavior: 'instant', // 🛑 La clave es hacer el scroll INSTANTÁNEO
-                    block: 'start'      
-                });
+            logic: () => {
+                // 1. Limpia el contenido de la consola
+                outputElement.innerHTML = '';
+                
+                // 2. 🛑 CORRECCIÓN: Usar window.scrollTo para un desplazamiento INSTANTÁNEO 🛑
+                //    Esto es más fiable que scrollIntoView para asegurar que el header fijo (que tiene margin-top) no interfiera.
+                window.scrollTo(0, document.getElementById('demonstration').offsetTop - 80);
+                
+                // 3. Reinicia la secuencia de bienvenida
+                inputElement.disabled = true;
+                initialLoadSequence();
+                
+                return null;
+                }
             }
-            
-            inputElement.disabled = true;
-            initialLoadSequence();
-            
-            return null;
-        }
-    }
+        
     };
     
     // --- 4. FUNCIÓN PRINCIPAL DE PROCESAMIENTO (handleCommand) ---
