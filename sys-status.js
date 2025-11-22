@@ -116,8 +116,6 @@ DESCRIPCIÓN
 
     Comandos Avanzados:
         sudo apt [arg]  Simulación de gestor de paquetes.
-        ip-lookup [ip]  Consulta API de geolocalización (Dato Real).
-        date-lookup [city] - Consulta la hora en tiempo real (Real API).
         check-raid      Muestra estado de HA.
         sudo poweroff   Apagado del sistema.
 `
@@ -279,68 +277,6 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
             }
         },
         
-        'ip-lookup': {
-            logic: async (args) => {
-                const target = args[0];
-                if (!target) return 'ip-lookup: missing host argument';
-
-                const API_URL = `https://ip-api.com/json/${target}`;
-                await new Promise(resolve => setTimeout(resolve, 1500)); 
-
-                try {
-                    const response = await fetch(API_URL);
-                    const data = await response.json();
-
-                    if (data.status === 'success') {
-                        return `
-[IP Lookup: ${data.query}]
-========================================
-Status: ${data.status.toUpperCase()}
-Country: ${data.country} (${data.countryCode})
-Region: ${data.regionName} / ${data.city}
-ISP: ${data.isp}
-AS/Org: ${data.as} / ${data.org}
-Timezone: ${data.timezone}
-(Real Data API Call)
-`
-                    } else {
-                        return `ip-lookup: Error resolving host: ${data.message || 'Host not found.'}`;
-                    }
-
-                } catch (error) {
-                    return 'ip-lookup: CRITICAL ERROR: Check network connection or try a different IP.';
-                }
-            }
-        },
-        'date-lookup': {
-            logic: async (args) => {
-                const city = args[0] || 'europe/madrid';
-                if (!city) return 'date-lookup: missing city argument';
-
-                const API_URL = `https://worldtimeapi.org/api/timezone/${city}`;
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                try {
-                    const response = await fetch(API_URL);
-                    
-                    if (response.status === 404) { return `date-lookup: Error 404: Zone '${city}' not found.`; }
-                    
-                    const data = await response.json();
-                    const datetime = new Date(data.datetime);
-                    
-                    return `
-[Time Lookup: ${data.timezone}]
-========================================
-Date/Time: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
-UTC Code: ${data.utc_offset}
-(Real Data API Call)
-`;
-
-                } catch (error) {
-                    return 'date-lookup: CRITICAL ERROR: Could not connect to external service.';
-                }
-            }
-        },
         'ping': {
             logic: (args) => {
                 const target = args[0];
