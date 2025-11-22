@@ -28,7 +28,7 @@ LISTADO DE HABILIDADES (cat skills.txt)
 [ASIR CORE]
 - SO: Windows Server, Ubuntu, AlmaLinux
 - Virtualización: Proxmox, VMWare, VirtualBox
-- Redes: VLAN, Routing, Switching, Firewall, OSI Layer
+- Redes: VLAN, Routing, Switching, Firewall
 
 [CYBER FOCUS]
 - Herramientas: SIEM, Honeypot (simulación), WireShark, Nmap
