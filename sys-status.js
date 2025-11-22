@@ -470,6 +470,31 @@ Capacity: 2TB
         return null; // Devolvemos null para indicar que el comando no tiene output de texto
     }
     }
+ 
+    // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
+    
+    async function initialLoadSequence() {
+        // 1. Mostrar el prompt con el comando que simula la carga de habilidades
+        const initialCommandP = document.createElement('p');
+        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input">cat skills.txt</span>`;
+        outputElement.appendChild(initialCommandP);
+
+        // 2. Ejecutar el efecto de máquina de escribir con las habilidades
+        const outputP = document.createElement('p');
+        outputP.classList.add('output');
+        outputElement.appendChild(outputP);
+        
+        await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
+
+        // 3. Restaurar el mensaje de help después de escribir las habilidades
+        const helpMessageP = document.createElement('p');
+        helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
+        outputElement.appendChild(helpMessageP);
+        
+        appendNewPrompt();
+
+        inputElement.disabled = false;
+    }
 
     // --- FUNCIÓN PRINCIPAL DE MANEJO DE COMANDOS ---
 
@@ -560,31 +585,6 @@ Capacity: 2TB
 
     demoSection.removeEventListener('mouseover', initializeConsole);
 }
-    
-    // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
-    
-    async function initialLoadSequence() {
-        // 1. Mostrar el prompt con el comando que simula la carga de habilidades
-        const initialCommandP = document.createElement('p');
-        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input">cat skills.txt</span>`;
-        outputElement.appendChild(initialCommandP);
-
-        // 2. Ejecutar el efecto de máquina de escribir con las habilidades
-        const outputP = document.createElement('p');
-        outputP.classList.add('output');
-        outputElement.appendChild(outputP);
-        
-        await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
-
-        // 3. Restaurar el mensaje de help después de escribir las habilidades
-        const helpMessageP = document.createElement('p');
-        helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
-        outputElement.appendChild(helpMessageP);
-        
-        appendNewPrompt();
-
-        inputElement.disabled = false;
-    }
     
     function initializeConsole() {
     if (initialized) return;
