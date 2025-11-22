@@ -61,8 +61,7 @@ LISTADO DE HABILIDADES (cat skills.txt)
             function typing() {
                 if (i < text.length) {
                     const char = text.charAt(i);
-                    if (char === '<' || char === '>') { 
-                    }
+                    if (char === '<' || char === '>') { }
                     element.innerHTML += char.replace(/\n/g, '<br>');
                     i++;
                     setTimeout(typing, SPEED);
@@ -187,7 +186,6 @@ DESCRIPCIÓN
                         }
                     }
                 }
-                
                 return `bash: cat: ${file}: No such file or directory`;
             }
         },
@@ -375,8 +373,7 @@ Request timeout for icmp_seq 3
         'clear': { logic: () => { outputElement.innerHTML = ''; inputElement.disabled = true; initialLoadSequence(); return null; } }
     };
     
-    // --- FUNCIÓN PRINCIPAL DE MANEJO DE COMANDOS ---
-
+    // --- 4. FUNCIÓN PRINCIPAL DE PROCESAMIENTO (handleCommand) ---
     async function handleCommand(commandLine) {
         if (!commandLine) return;
 
@@ -448,7 +445,7 @@ Request timeout for icmp_seq 3
         inputElement.focus();
     }
     
-    // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
+    // --- 5. SECUENCIA DE CARGA INICIAL (initialLoadSequence) ---
     
     async function initialLoadSequence() {
         const initialCommandP = document.createElement('p');
@@ -470,6 +467,8 @@ Request timeout for icmp_seq 3
         inputElement.disabled = false;
     }
 
+    // --- 6. FUNCIÓN MOUSEOVER (initializeConsole) ---
+    
     function initializeConsole() {
         if (initialized) return;
         initialized = true;
@@ -482,7 +481,8 @@ Request timeout for icmp_seq 3
         demoSection.removeEventListener('mouseover', initializeConsole);
     }
     
-    // --- INICIALIZACIÓN ---
+    // --- 7. INICIALIZACIÓN (LISTENERS Y ACTIVACIÓN) ---
+    
     demoSection.addEventListener('mouseover', initializeConsole);
 
     inputElement.addEventListener('keydown', (e) => {
@@ -494,4 +494,5 @@ Request timeout for icmp_seq 3
     });
     
     inputElement.disabled = true;
+
 });
