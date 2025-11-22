@@ -90,7 +90,7 @@ LISTADO DE HABILIDADES (cat skills.txt)
     // Esto es mucho más estable que usar window.scrollTo en el bucle de typing.
     inputElement.scrollIntoView({
         behavior: 'auto', // Scroll rápido para seguir el texto
-        block: 'end'      // Asegura que el input quede visible al final de la ventana
+        block: 'center'      // Asegura que el input quede visible al final de la ventana
     });
 }
 
