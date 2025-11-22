@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let userName = 'user';
     const PROMPT = 'user@portfolio-sys';
     const SPEED = 10; 
+    const RESERVED_IPS = ['127.0.0.1', '192.168.1.1', '8.8.8.8'];
+    const DUMMY_HOSTS = ['google.com', 'luigidelsordo.com'];
 
     // --- SISTEMA DE ARCHIVOS VIRTUAL ---
     const fileSystem = {
@@ -19,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const INSTALLED_PACKAGES = ['python3', 'git', 'nginx', 'mariadb-server'];
     const auditLog = []; 
 
-    // Mensaje que aparece en el efecto de máquina de escribir
     const INITIAL_SKILLS_CONTENT = `
 ==================================================
 LISTADO DE HABILIDADES (cat skills.txt)
@@ -27,7 +28,7 @@ LISTADO DE HABILIDADES (cat skills.txt)
 [ASIR CORE]
 - SO: Windows Server, Ubuntu, AlmaLinux
 - Virtualización: Proxmox, VMWare, VirtualBox
-- Redes: VLAN, Routing, Switching, Firewall
+- Redes: VLAN, Routing, Switching, Firewall, OSI Layer
 
 [CYBER FOCUS]
 - Herramientas: SIEM, Honeypot (simulación), WireShark, Nmap
@@ -86,40 +87,42 @@ NAME
     help - Muestra información de los comandos.
 
 SINTAXIS
-    help [comando]
+    [comando] [argumentos]
 
 DESCRIPCIÓN
-    Comandos de Navegación y Archivos (Simulación de Linux):
-        cd [dir]        - Cambia el directorio actual. Usa '..' para subir.
-        ls              - Lista archivos y directorios en la ubicación actual.
-        cat [archivo]   - Muestra el contenido de un archivo.
-        touch [archivo] - Crea un nuevo archivo vacío (simulado).
-        rm [archivo]    - Elimina un archivo (simulado).
+    Comandos de Archivos y Sistema:
+        cd [dir]        Cambia el directorio.
+        ls              Lista archivos/directorios.
+        cat [archivo]   Muestra contenido.
+        touch [archivo] Crea archivo vacío.
+        rm [archivo]    Elimina archivo.
+        clear           Limpia la pantalla.
+        whoami          Muestra el usuario.
+        login [user]    Inicia sesión.
 
-    Comandos de Sistema y Redes (Demostración de Habilidades ASIR):
-        sudo apt [arg]  - Simulación de gestor de paquetes (update/install).
-        whoami          - Muestra el usuario actual.
-        login [user]    - Inicia sesión como otro usuario (simulado).
-        ip-lookup [ip]  - Consulta la geolocalización (Real API).
-        date-lookup [city] - Consulta la hora en tiempo real de una ciudad (Real API).
-        ping [host]     - Simula el chequeo de conectividad de red.
-        netstat         - Muestra conexiones de red activas.
-        nmap [ip]       - Simula un escaneo de puertos (Demostración de filtros Firewall).
-        check-raid      - Muestra el estado del sistema de Alta Disponibilidad (RAID).
-        clear           - Limpia la pantalla.
-        sudo poweroff   - Easter Egg: inicia la secuencia de apagado.
+    Comandos de Redes y Diagnóstico (Simulación Avanzada):
+        ping [ip/host]  Chequea conectividad (simula latencia real).
+        netstat         Muestra conexiones y puertos.
+        ifconfig        Muestra configuración de interfaz.
+        traceroute [h]  Simula traza de ruta.
+        nmap [ip]       Simula escaneo de puertos.
+        dig [host]      Consulta DNS.
+        arp             Muestra tabla ARP.
+
+    Comandos Avanzados:
+        sudo apt [arg]  Simulación de gestor de paquetes.
+        ip-lookup [ip]  Consulta API de geolocalización (Dato Real).
+        check-raid      Muestra estado de HA.
+        sudo poweroff   Apagado del sistema.
 `
         },
-        'whoami': { output: `${userName} (ASIR, IT Junior, Ciber-Aspirante)` },
+        'whoami': { output: `${userName}` }, // Solo el usuario para ser más fiel a Linux
         
         // --- Comandos de Sistema de Archivos ---
         'cd': {
             logic: (args) => {
                 const target = args[0];
-                if (!target || target === '~') {
-                    currentDir = '/home/user';
-                    return '';
-                }
+                if (!target || target === '~') { currentDir = '/home/user'; return ''; }
                 if (target === '.') return '';
                 
                 const oldDir = currentDir;
@@ -144,14 +147,14 @@ DESCRIPCIÓN
                     return '';
                 }
 
-                return `bash: cd: ${target}: No existe el directorio o permiso denegado`;
+                return `bash: cd: ${target}: No such file or directory`;
             }
         },
         'ls': {
             logic: (args) => {
                 const targetDir = args[0] || currentDir;
                 const node = fileSystem[targetDir];
-                if (!node) return `ls: No se puede acceder al directorio '${targetDir}'.`;
+                if (!node) return `ls: cannot access '${targetDir}': No such file or directory`;
                 
                 let output = '';
                 if (node.dirs.length > 0) {
@@ -166,7 +169,7 @@ DESCRIPCIÓN
         'cat': { 
             logic: (args) => {
                 const file = args[0];
-                if (!file) return 'Error: Faltó el argumento [file]. Uso: cat [file]';
+                if (!file) return 'cat: usage: cat [file]...';
                 
                 if (file.toLowerCase() === 'skills.txt') return INITIAL_SKILLS_CONTENT;
                 
@@ -175,33 +178,33 @@ DESCRIPCIÓN
                         switch (file.toLowerCase()) {
                             case 'readme.md': return '# [Luigi Del Sordo - Portafolio]\n\nEste portafolio es un proyecto personal que demuestra mis habilidades en Administración de Sistemas y Ciberseguridad. Todo el código fuente está disponible en mi GitHub.';
                             case 'projects.list': return `\nProyectos clave (Ver GitHub para más detalles):\n1. Proyecto 'ZeroTrust-Net': Segmentación de red y VPNs.\n2. Proyecto 'HoneyTrap': Configuración de Honeypot y análisis de logs.`;
-                            case 'cv.pdf': return 'Error: Archivo binario. Use un visor.';
-                            case 'profile.txt': return `Nombre: Luigi Del Sordo\nEspecialización: ASIR\nIdiomas: ES, EN, IT\nInterés: SOC/Pentesting.`;
-                            default: return `Contenido simulado de ${file}.`;
+                            case 'cv.pdf': return 'cat: cv.pdf: Is a binary file. Use a viewer.';
+                            case 'profile.txt': return `Name: Luigi Del Sordo\nSpecialization: ASIR\nLanguages: ES, EN, IT\nInterest: SOC/Pentesting.`;
+                            default: return `Simulated content of ${file}.`;
                         }
                     }
                 }
                 
-                return `bash: cat: ${file}: No existe el archivo o permiso denegado.`;
+                return `bash: cat: ${file}: No such file or directory`;
             }
         },
         'touch': {
             logic: (args) => {
                 const file = args[0];
-                if (!file) return 'Error: Faltó el argumento [file]. Uso: touch [file]';
+                if (!file) return 'touch: missing file operand';
 
                 const node = fileSystem[currentDir];
                 if (node && !node.files.includes(file)) {
                     node.files.push(file);
                     return '';
                 }
-                return `bash: touch: ${file}: El archivo ya existe o permiso denegado.`;
+                return `bash: touch: ${file}: File exists or Permission denied`;
             }
         },
         'rm': {
             logic: (args) => {
                 const file = args[0];
-                if (!file) return 'Error: Faltó el argumento [file]. Uso: rm [file]';
+                if (!file) return 'rm: missing operand';
 
                 const node = fileSystem[currentDir];
                 const index = node.files.indexOf(file);
@@ -210,7 +213,7 @@ DESCRIPCIÓN
                     node.files.splice(index, 1);
                     return '';
                 }
-                return `bash: rm: ${file}: No existe el archivo.`;
+                return `rm: cannot remove '${file}': No such file or directory`;
             }
         },
         
@@ -222,7 +225,6 @@ DESCRIPCIÓN
 Hit:1 http://security.ubuntu.com/ubuntu focal-security InRelease
 Hit:2 http://es.archive.ubuntu.com/ubuntu focal InRelease
 Get:3 http://es.archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
-Get:4 http://es.archive.ubuntu.com/ubuntu focal-backports InRelease [108 kB]
 Fetched 222 kB in 1s (150 kB/s)
 Reading package lists... Done
 `;
@@ -232,20 +234,16 @@ Reading package lists... Done
                 if (args[0] === 'apt' && args[1] === 'install') {
                     const packageName = args[2] || 'paquete-desconocido';
                     if (INSTALLED_PACKAGES.includes(packageName)) {
-                         return `${packageName} ya está en su versión más reciente.`;
+                         return `Reading package lists... Done\n${packageName} is already the newest version.`;
                     }
                     const output = `
 Reading package lists... Done
 Building dependency tree... Done
 The following NEW packages will be installed:
-  ${packageName} libssl-dev libevent-2.1
+  ${packageName} libssl-dev
 Need to get 15.5 MB of archives.
 Get:1 http://es.archive.ubuntu.com/ubuntu/pool/main/d/${packageName} ${packageName}_1.0_amd64.deb [2.5 MB]
 Progress: [██████████████████████████████████] 100%
-Selecting previously unselected package ${packageName}.
-(Reading database ... 2500 files and directories currently installed.)
-Preparing to unpack .../${packageName}_1.0_amd64.deb ...
-Unpacking ${packageName} (1.0) ...
 Setting up ${packageName} (1.0) ...
 Processing triggers for man-db (2.9.1-1) ...
 `;
@@ -268,22 +266,22 @@ Processing triggers for man-db (2.9.1-1) ...
   
 Simulación terminada. Escribe 'clear' para reiniciar.`;
                 }
-                return `bash: sudo: ${args.join(' ')}: Comando no reconocido o permisos insuficientes.`;
+                return `sudo: command not found`; // Error estricto de sudo
             }
         },
 
-        // --- Comandos de Ciberseguridad/Redes (Simulados y API) ---
+        // --- Comandos de Ciberseguridad/Redes (Simulación Avanzada) ---
         'login': {
             logic: (args) => {
                 const user = args[0] || 'luigi';
                 userName = user;
-                return `Login successful. Session initiated for user ${userName}. (Prompt actualizado)`;
+                return `Login successful for user ${userName}. Prompt updated.`;
             }
         },
         'ip-lookup': {
             logic: async (args) => {
                 const target = args[0];
-                if (!target) return 'Error: Faltó el argumento [IP/Domain]. Uso: ip-lookup [dominio]';
+                if (!target) return 'ip-lookup: missing host argument';
 
                 const API_URL = `http://ip-api.com/json/${target}`;
                 await new Promise(resolve => setTimeout(resolve, 1500)); 
@@ -297,57 +295,30 @@ Simulación terminada. Escribe 'clear' para reiniciar.`;
 [IP Lookup: ${data.query}]
 ========================================
 Status: ${data.status.toUpperCase()}
-País: ${data.country} (${data.countryCode})
-Región: ${data.regionName} / ${data.city}
-Proveedor: ${data.isp}
+Country: ${data.country} (${data.countryCode})
+Region: ${data.regionName} / ${data.city}
+ISP: ${data.isp}
 AS/Org: ${data.as} / ${data.org}
 Timezone: ${data.timezone}
+(Real Data API Call)
 `
                     } else {
-                        return `Error en la consulta: ${data.message || 'No se pudo resolver la IP/dominio.'}`;
+                        return `ip-lookup: Error resolving host: ${data.message || 'Host not found.'}`;
                     }
 
                 } catch (error) {
-                    return `CRITICAL ERROR: No se pudo establecer conexión con el servidor DNS/API.`;
-                }
-            }
-        },
-        'date-lookup': {
-            logic: async (args) => {
-                const city = args[0] || 'europe/madrid';
-                if (!city) return 'Error: Faltó el argumento [city]. Uso: date-lookup [region/city]';
-
-                const API_URL = `http://worldtimeapi.org/api/timezone/${city}`;
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                try {
-                    const response = await fetch(API_URL);
-                    
-                    if (response.status === 404) {
-                         return `Error 404: Zona horaria '${city}' no encontrada.`;
-                    }
-                    
-                    const data = await response.json();
-                    const datetime = new Date(data.datetime);
-                    
-                    return `
-[Time Lookup: ${data.timezone}]
-========================================
-Fecha/Hora: ${datetime.toLocaleDateString()} ${datetime.toLocaleTimeString()}
-Código UTC: ${data.utc_offset}
-Día de la semana: ${data.day_of_week}
-(Consulta API de hora en tiempo real)
-`;
-
-                } catch (error) {
-                    return `CRITICAL ERROR: No se pudo conectar a la API de tiempo global.`;
+                    return `ip-lookup: CRITICAL ERROR: Could not connect to external service.`;
                 }
             }
         },
         'ping': {
             logic: (args) => {
-                const target = args[0] || 'localhost';
-                return `
+                const target = args[0];
+                if (!target) return 'ping: usage error: destination address required';
+
+                // Simulación de latencia basada en el host
+                if (RESERVED_IPS.includes(target) || DUMMY_HOSTS.includes(target)) {
+                    return `
 PING ${target} (${target}): 56 data bytes
 64 bytes from ${target}: icmp_seq=1 ttl=64 time=0.100 ms
 64 bytes from ${target}: icmp_seq=2 ttl=64 time=0.090 ms
@@ -355,6 +326,17 @@ PING ${target} (${target}): 56 data bytes
 --- ${target} ping statistics ---
 3 packets transmitted, 3 received, 0% packet loss, time 2002ms
 `;
+                } else {
+                    // Simulación de fallo de conexión para IPs externas/desconocidas
+                    return `
+PING ${target} (${target}): 56 data bytes
+Request timeout for icmp_seq 1
+Request timeout for icmp_seq 2
+Request timeout for icmp_seq 3
+--- ${target} ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss
+`;
+                }
             }
         },
         'traceroute': {
@@ -365,25 +347,25 @@ traceroute to ${target} (${target}), 30 hops max, 60 byte packets
  1  router (192.168.1.1)  0.450 ms  0.500 ms  0.620 ms
  2  isp-fw (10.0.0.1)  5.120 ms  5.230 ms  5.300 ms
  3  core-router-a (1.2.3.4)  12.300 ms  12.400 ms  12.500 ms
- 4  * * * (Timeout, Firewall/ACL simulation)
+ 4  * * * (Timeout, Router/Firewall ACL simulation)
  5  target-network (${target})  35.120 ms  35.200 ms  35.300 ms
 `;
             }
         },
-        'netstat': {
-            output: `
-Proto Local Address           Foreign Address         State
-TCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)
-TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)
-UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
-`
-        },
-        'arp': {
-            output: `
-Address                  HWtype  HWaddress           Flags Mask  Iface
-192.168.1.1              ether   a0:b1:c2:d3:e4:f5   C     eth0
-192.168.1.100            ether   00:1a:2b:3c:4d:5e   C     eth0
-`
+        'nmap': {
+            logic: (args) => {
+                const target = args[0];
+                if (!target) return 'nmap: missing host argument';
+                return `
+Nmap scan report for ${target} (Simulated 3s delay)
+Host is up.
+PORT      STATE SERVICE
+22/tcp    filtered ssh (Firewall/Hardened)
+80/tcp    closed  http
+443/tcp   open    https (Cifrado requerido)
+53/tcp    open    domain (DNS Server)
+`;
+            }
         },
         'dig': {
             logic: (args) => {
@@ -397,39 +379,12 @@ google.com. 172800 IN NS ns1.google.com.
 `;
             }
         },
-        'nmap': {
-            logic: (args) => {
-                const target = args[0];
-                if (!target) return 'Error: Faltó el argumento [target]. Uso: nmap -sV 192.168.1.1';
-                return `
-Simulando Nmap -sV en ${target} (Retraso de 3s)...
-Host is up.
-PORT      STATE SERVICE
-22/tcp    filtered ssh (Firewall)
-80/tcp    closed  http
-443/tcp   open    https (Cifrado requerido)
-53/tcp    open    domain (DNS Server)
-`;
-            }
-        },
-        'nslookup': {
-            logic: (args) => {
-                const target = args[0] || 'luigidelsordo.com';
-                return `
-Server:  127.0.0.53
-Address: 127.0.0.53#53
-Non-authoritative answer:
-Name: ${target}
-Address: 198.51.100.25 (Simulado)
-`;
-            }
-        },
-        'route': {
+        'netstat': {
             output: `
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Iface
-default         192.168.1.1     0.0.0.0         UG    100    eth0
-10.0.0.0        0.0.0.0         255.0.0.0       U     0      eth1 (VPN)
+Proto Local Address           Foreign Address         State
+TCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)
+TCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)
+UDP   10.0.1.1:51820          0.0.0.0:* LISTEN (WireGuard VPN)
 `
         },
         'ifconfig': {
@@ -490,7 +445,7 @@ Capacity: 2TB
              latency = 100;
         } else if (cmdHandler) {
             if (cmdHandler.logic) {
-                if (command === 'ip-lookup' || command === 'nmap') latency = 2500;
+                if (['ping', 'nmap', 'traceroute', 'ip-lookup'].includes(command)) latency = 2500;
                 if (['cd', 'rm', 'touch', 'login'].includes(command)) skipOutput = true; 
                 output = await cmdHandler.logic(args); 
             } else if (cmdHandler.output) {
@@ -521,32 +476,30 @@ Capacity: 2TB
     // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
     
     async function initialLoadSequence() {
-        // 1. Mostrar el prompt con el comando "cat skills.txt"
+        // 1. Mostrar el prompt con el comando que simula la carga de habilidades
         const initialCommandP = document.createElement('p');
-        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input" id="initialInput">cat skills.txt</span>`;
+        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input">cat skills.txt</span>`;
         outputElement.appendChild(initialCommandP);
 
-        // 2. Ejecutar el efecto de máquina de escribir con las habilidades (el contenido que te gustaba)
+        // 2. Ejecutar el efecto de máquina de escribir con las habilidades
         const outputP = document.createElement('p');
         outputP.classList.add('output');
         outputElement.appendChild(outputP);
         
         await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
 
-        // 3. 🛑 Restaurar el mensaje de help después de escribir las habilidades
+        // 3. Restaurar el mensaje de help después de escribir las habilidades
         const helpMessageP = document.createElement('p');
         helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
         outputElement.appendChild(helpMessageP);
         
         appendNewPrompt();
-        // inputElement.focus(); <--- ELIMINADO PARA EVITAR EL TECLADO EN MÓVIL
     }
 
     function initializeConsole() {
         if (initialized) return; 
         initialized = true;
 
-        const typingElement = document.getElementById('typingEffect');
         if (typingElement) typingElement.classList.remove('blink');
 
         inputElement.disabled = true; 
