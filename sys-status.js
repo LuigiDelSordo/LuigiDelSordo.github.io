@@ -465,7 +465,8 @@ Capacity: 2TB
         if (!commandLine) return;
 
         const timestamp = new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-        auditLog.push(`[${timestamp}] ${userName}@portfolio: ${commandLine}`);
+        // Asumiendo que auditLog está definido, si no, comentar la línea
+        // auditLog.push(`[${timestamp}] ${userName}@portfolio: ${commandLine}`); 
         
         outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input">${commandLine}</span></p>`;
 
@@ -476,7 +477,8 @@ Capacity: 2TB
         const cmdHandler = COMMAND_MAP[command];
         let output = '';
         let latency = 500; 
-        let skipOutput = false;
+        let skipOutput = false; // Saltarse el efecto de escritura si es 'cd', 'rm', etc.
+        let outputIsHTML = false; // Para LS
 
         if (command === 'clear') { 
             cmdHandler.logic();
@@ -486,37 +488,28 @@ Capacity: 2TB
         if (command === 'sudo') {
              output = await cmdHandler.logic(args);
              latency = 100;
-        } else if (cmdHandler) {
+        } else if (cmdHandler) { // Comando reconocido (NO es sudo y NO es clear)
+            
+            if (command === 'ls') outputIsHTML = true; // El LS siempre devuelve HTML coloreado
+            
             if (cmdHandler.logic) {
-                if (['ping', 'nmap', 'traceroute', 'ip-lookup'].includes(command)) latency = 2500;
-                if (['cd', 'rm', 'touch', 'login'].includes(command)) skipOutput = true; 
-                output = await cmdHandler.logic(args); 
+                 if (['ping', 'nmap', 'traceroute', 'ip-lookup', 'date-lookup'].includes(command)) latency = 2500;
+                 if (['cd', 'rm', 'touch', 'login'].includes(command)) skipOutput = true; 
+                 output = await cmdHandler.logic(args); 
             } else if (cmdHandler.output) {
-                output = cmdHandler.output;
+                 output = cmdHandler.output;
             }
-        } } else {
-            // 🛑 CORRECCIÓN DEL ERROR DE FORMATO Y SALTO DEL EFECTO DE ESCRITURA
-            // Creamos el error con el formato estricto de Linux.
-            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
+        } else { 
+            // 🛑 COMANDO NO ENCONTRADO (Bloque ELSE final)
+            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command}: command not found</span></p>`;
             
-            // 1. Imprimimos el error directamente (sin typeWriterEffect)
             outputElement.innerHTML += errorOutput;
-            
-            // 2. Añadimos el nuevo prompt
             appendNewPrompt();
-            
-            // 3. Enfocamos la entrada para que el usuario pueda escribir
             inputElement.focus();
-            
-            // 4. Salimos de la función inmediatamente
             return;
         }
-        
-        // Saltamos el efecto de escritura
-        appendNewPrompt();
-        inputElement.focus();
-        return;
-        }
+
+        // --- LÓGICA DE SALIDA (Solo se ejecuta si el comando fue reconocido) ---
 
         if (skipOutput && !output) {
             appendNewPrompt();
@@ -530,12 +523,17 @@ Capacity: 2TB
         outputP.classList.add('output');
         outputElement.appendChild(outputP);
         
-        await typeWriterEffect(outputP, output.trim());
+        // Imprimir HTML o usar efecto de escritura
+        if (outputIsHTML) {
+            outputP.innerHTML = output;
+        } else {
+            await typeWriterEffect(outputP, output.trim());
+        }
 
         appendNewPrompt();
         inputElement.focus();
     }
-
+    
     // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
     
     async function initialLoadSequence() {
