@@ -364,13 +364,51 @@ Request timeout for icmp_seq 3
                 }
             }
         },
-        'traceroute': { logic: (args) => { const target = args[0] || 'google.com'; return `traceroute to ${target} (${target}), 30 hops max\n 1  router (192.168.1.1)  0.450 ms\n 2  isp-fw (10.0.0.1)  5.120 ms\n 3  core-router-a (1.2.3.4)  12.300 ms\n 4  * * * (Timeout, Router/Firewall ACL simulation)\n 5  target-network (${target})  35.120 ms`; } },
-        'nmap': { logic: (args) => { const target = args[0]; if (!target) return 'nmap: missing host argument'; return `Nmap scan report for ${target} (Simulated 3s delay)\nHost is up.\nPORT      STATE SERVICE\n22/tcp    filtered ssh (Firewall)\n443/tcp   open    https (Cifrado requerido)\n53/tcp    open    domain (DNS Server)`; } },
-        'dig': { logic: (args) => { const target = args[0] || 'google.com'; return `; <<>> DiG 9.10.3-P4 <<>> ${target}\n;; ANSWER SECTION:\n${target}. 300 IN A 142.250.78.14\n;; AUTHORITY SECTION:\ngoogle.com. 172800 IN NS ns1.google.com.`; } },
-        'netstat': { output: `Proto Local Address           Foreign Address         State\nTCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)\nTCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)` },
-        'ifconfig': { output: `eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.10/24  broadcast 192.168.1.255\n        ether 00:1a:2b:3c:4d:5e  txqueuelen 1000  (Ethernet)` },
-        'check-raid': { output: `[RAID Status Check - Alta Disponibilidad]\nArray: RAID1-DATA (md0)\nStatus: **CLEAN**\nDisks: 2/2 (sda1, sdb1)\nCapacity: 2TB` },
-        'clear': { logic: () => { outputElement.innerHTML = ''; inputElement.disabled = true; initialLoadSequence(); return null; } }
+        
+            'traceroute': { 
+                logic: (args) => { const target = args[0] || 'google.com'; return `traceroute to ${target} (${target}), 30 hops max\n 1  router (192.168.1.1)  0.450 ms\n 2  isp-fw (10.0.0.1)  5.120 ms\n 3  core-router-a (1.2.3.4)  12.300 ms\n 4  * * * (Timeout, Router/Firewall ACL simulation)\n 5  target-network (${target})  35.120 ms`; 
+                                 } },
+            
+            'nmap': { 
+                logic: (args) => { const target = args[0]; if (!target) return 'nmap: missing host argument'; return `Nmap scan report for ${target} (Simulated 3s delay)\nHost is up.\nPORT      STATE SERVICE\n22/tcp    filtered ssh (Firewall)\n443/tcp   open    https (Cifrado requerido)\n53/tcp    open    domain (DNS Server)`; 
+                                 } },
+            
+            'dig': { 
+                logic: (args) => { const target = args[0] || 'google.com'; return `; <<>> DiG 9.10.3-P4 <<>> ${target}\n;; ANSWER SECTION:\n${target}. 300 IN A 142.250.78.14\n;; AUTHORITY SECTION:\ngoogle.com. 172800 IN NS ns1.google.com.`; 
+                                 } },
+           
+            'netstat': { 
+                output: `Proto Local Address           Foreign Address         State\nTCP   0.0.0.0:443             0.0.0.0:* LISTEN (WEB/VPN)\nTCP   127.0.0.1:8080          0.0.0.0:* LISTEN (SIEM agent)` 
+            },
+           
+            'ifconfig': { 
+                output: `eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500\n        inet 192.168.1.10/24  broadcast 192.168.1.255\n        ether 00:1a:2b:3c:4d:5e  txqueuelen 1000  (Ethernet)` 
+            },
+            
+            'check-raid': { 
+                output: `[RAID Status Check - Alta Disponibilidad]\nArray: RAID1-DATA (md0)\nStatus: **CLEAN**\nDisks: 2/2 (sda1, sdb1)\nCapacity: 2TB` 
+            },
+           
+            'clear': {
+        logic: () => {
+            outputElement.innerHTML = '';
+            
+            const consoleElement = demoSection; 
+            if (consoleElement) {
+                // Usa 'instant' para que no haya cálculo de offset, ya que el header es fijo.
+                // Esto salta directamente a la posición (block: 'start')
+                consoleElement.scrollIntoView({
+                    behavior: 'instant', // 🛑 La clave es hacer el scroll INSTANTÁNEO
+                    block: 'start'      
+                });
+            }
+            
+            inputElement.disabled = true;
+            initialLoadSequence();
+            
+            return null;
+        }
+    }
     };
     
     // --- 4. FUNCIÓN PRINCIPAL DE PROCESAMIENTO (handleCommand) ---
@@ -413,7 +451,7 @@ Request timeout for icmp_seq 3
             }
         } else { 
             // COMANDO NO ENCONTRADO
-            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command}: command not found</span></p>`;
+            const errorOutput = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
             
             outputElement.innerHTML += errorOutput;
             appendNewPrompt();
