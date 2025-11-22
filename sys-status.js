@@ -449,24 +449,25 @@ Disks: 2/2 (sda1, sdb1)
 Capacity: 2TB
 `
         },
-        'clear': {
-        logic: () => {
+        // Dentro del objeto COMMAND_MAP
+    'clear': {
+    logic: () => {
         outputElement.innerHTML = '';
         
-        // 🛑 NUEVA LÓGICA DE SCROLL: Mover la pantalla suavemente a la consola
+        // 🛑 LÓGICA DE SCROLL PARA CENTRAR LA CONSOLA (#demonstration)
         const consoleElement = document.getElementById('demonstration');
         if (consoleElement) {
+            // Usamos scrollIntoView con comportamiento 'smooth' para un efecto más pulido
             consoleElement.scrollIntoView({
-                behavior: 'smooth', // Hace el desplazamiento suave
-                block: 'start'      // Coloca la consola en la parte superior de la ventana
+                behavior: 'smooth', 
+                block: 'start'      
             });
         }
         
         inputElement.disabled = true;
         initialLoadSequence();
         
-        // inputElement.disabled = false; (La habilitación ya ocurre dentro de initialLoadSequence)
-        return null;
+        return null; // Devolvemos null para indicar que el comando no tiene output de texto
     }
     }
 
