@@ -19,6 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const INSTALLED_PACKAGES = ['python3', 'git', 'nginx', 'mariadb-server'];
     const auditLog = []; 
 
+    // Mensaje que aparece en el efecto de máquina de escribir
+    const INITIAL_SKILLS_CONTENT = `
+==================================================
+LISTADO DE HABILIDADES (cat skills.txt)
+==================================================
+[ASIR CORE]
+- SO: Windows Server, Ubuntu, AlmaLinux
+- Virtualización: Proxmox, VMWare, VirtualBox
+- Redes: VLAN, Routing, Switching, Firewall
+
+[CYBER FOCUS]
+- Herramientas: SIEM, Honeypot (simulación), WireShark, Nmap
+- Seguridad: VPN (WireGuard), Hardening, Criptografía
+- Rol: Aspirante a Analista SOC / Pentesting
+
+[DEV/DATA]
+- Scripting: PowerShell, bash
+- Bases de Datos: MariaDB (CLI), PhpMyAdmin
+- Web: HTML, CSS, JavaScript, PHP
+`;
+
     // --- ELEMENTOS DEL DOM ---
     const outputElement = document.getElementById('terminalOutput');
     const inputElement = document.getElementById('commandInput');
@@ -146,6 +167,8 @@ DESCRIPCIÓN
             logic: (args) => {
                 const file = args[0];
                 if (!file) return 'Error: Faltó el argumento [file]. Uso: cat [file]';
+                
+                if (file.toLowerCase() === 'skills.txt') return INITIAL_SKILLS_CONTENT;
                 
                 for (const path in fileSystem) {
                     if (fileSystem[path].files.includes(file)) {
@@ -498,10 +521,22 @@ Capacity: 2TB
     // --- SECUENCIA DE CARGA INICIAL (Activación por mouseover) ---
     
     async function initialLoadSequence() {
-        // 🛑 PUNTO DE CORRECCIÓN: Eliminamos el focus() al final de esta función
-        const initialMessage = "Escribe 'help' para ver los comandos disponibles";
+        // 1. Mostrar el prompt con el comando "cat skills.txt"
+        const initialCommandP = document.createElement('p');
+        initialCommandP.innerHTML = `${getPromptHTML()} <span class="input" id="initialInput">cat skills.txt</span>`;
+        outputElement.appendChild(initialCommandP);
+
+        // 2. Ejecutar el efecto de máquina de escribir con las habilidades (el contenido que te gustaba)
+        const outputP = document.createElement('p');
+        outputP.classList.add('output');
+        outputElement.appendChild(outputP);
         
-        outputElement.innerHTML += `<p>${initialMessage}</p>`;
+        await typeWriterEffect(outputP, INITIAL_SKILLS_CONTENT.trim());
+
+        // 3. 🛑 Restaurar el mensaje de help después de escribir las habilidades
+        const helpMessageP = document.createElement('p');
+        helpMessageP.innerHTML = "Escribe 'help' para ver los comandos disponibles";
+        outputElement.appendChild(helpMessageP);
         
         appendNewPrompt();
         // inputElement.focus(); <--- ELIMINADO PARA EVITAR EL TECLADO EN MÓVIL
