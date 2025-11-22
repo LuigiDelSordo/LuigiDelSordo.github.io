@@ -66,12 +66,6 @@ LISTADO DE HABILIDADES (cat skills.txt)
                 element.innerHTML += char.replace(/\n/g, '<br>');
                 i++;
                 
-               // Usamos scrollIntoView en el elemento más bajo de la consola (el input).
-                inputElement.scrollIntoView({
-                    behavior: 'auto', 
-                    block: 'end'      
-                });
-                
                 setTimeout(typing, SPEED);
             } else {
                 element.classList.remove('blink');
@@ -491,6 +485,11 @@ Request timeout for icmp_seq 3
             await typeWriterEffect(outputP, output.trim());
         }
 
+        inputElement.scrollIntoView({
+            behavior: 'smooth', // Desplazamiento suave (una sola vez)
+            block: 'end'        // Lleva el input al final del viewport
+        });
+        
         appendNewPrompt();
         inputElement.focus();
     }
