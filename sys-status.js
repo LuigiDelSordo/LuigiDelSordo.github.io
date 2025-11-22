@@ -55,23 +55,25 @@ LISTADO DE HABILIDADES (cat skills.txt)
     }
 
     function typeWriterEffect(element, text) {
-        return new Promise(resolve => {
-            let i = 0;
-            element.classList.add('blink');
-            
-            function typing() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i).replace(/\n/g, '<br>');
-                    i++;
-                    setTimeout(typing, SPEED);
-                } else {
-                    element.classList.remove('blink');
-                    resolve();
-                }
+    return new Promise(resolve => {
+        let i = 0;
+        // 🛑 CORRECCIÓN CLAVE: Limpia el contenido del elemento ANTES de escribir
+        element.innerHTML = ''; 
+        element.classList.add('blink');
+        
+        function typing() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i).replace(/\n/g, '<br>');
+                i++;
+                setTimeout(typing, SPEED);
+            } else {
+                element.classList.remove('blink');
+                resolve();
             }
-            typing();
-        });
-    }
+        }
+        typing();
+    });
+}
 
     function appendNewPrompt() {
         outputElement.innerHTML += `<p>${getPromptHTML()} <span class="input"></span></p>`;
@@ -451,7 +453,14 @@ Capacity: 2TB
                 output = cmdHandler.output;
             }
         } else {
-            output = `<span style="color: #ff5f56;">bash: ${command}: command not found</span>`;
+        // 🛑 Modificamos el output para que se añada directamente, sin efecto de escritura.
+        output = `<p class="output"><span style="color: #ff5f56;">bash: ${command} command not found</span></p>`;
+        outputElement.innerHTML += output;
+        
+        // Saltamos el efecto de escritura
+        appendNewPrompt();
+        inputElement.focus();
+        return;
         }
 
         if (skipOutput && !output) {
